@@ -1,623 +1,537 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import {
-  Copy, Check, ExternalLink, Gamepad2, Image, Bot,
-  Zap, Shield, Cpu, Star, ChevronDown, Github,
-  MessageSquare, Globe, Layers, Target, Code2, Palette
-} from "lucide-react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>V. Vishnu — Roblox QA & Technical Creative</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  tailwind.config = {
+    theme:{ extend:{ fontFamily:{ syne:['Syne','sans-serif'], dm:['DM Sans','sans-serif'] } } }
+  }
+</script>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#000;color:#fff;font-family:'DM Sans',sans-serif;overflow-x:hidden}
+  ::selection{background:rgba(0,212,255,.22);color:#00d4ff}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:#000}
+  ::-webkit-scrollbar-thumb{background:rgba(0,212,255,.3);border-radius:99px}
 
-// ============================================================
-//  CENTRALIZED DATA — Edit all site content here
-// ============================================================
-const CONST_DATA = {
-  name: "V. Vishnu",
-  shortName: "Vishnu",
-  title: "Roblox QA Tester & Technical Creative",
+  .grad-cyan{background:linear-gradient(135deg,#00d4ff,#4f8eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .grad-white{background:linear-gradient(135deg,#fff 45%,rgba(255,255,255,.3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .glass{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  .grid-bg{background-image:linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);background-size:60px 60px}
+
+  .hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:min(700px,130vw);height:min(700px,130vw);background:radial-gradient(circle,rgba(0,212,255,.14) 0%,rgba(79,142,255,.07) 38%,transparent 68%);border-radius:50%;filter:blur(30px);pointer-events:none}
+
+  #navbar.scrolled{background:rgba(0,0,0,.75)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border-bottom:1px solid rgba(0,212,255,.1)!important}
+
+  .proj-card{transition:box-shadow .3s,border-color .3s,transform .25s}
+  .proj-card:hover{transform:translateY(-4px)}
+  .proj-card[data-cat="QA Testing"]:hover{box-shadow:0 0 32px rgba(0,212,255,.15),0 0 70px rgba(0,212,255,.06);border-color:rgba(0,212,255,.38)!important}
+  .proj-card[data-cat="GFX / Photoshop"]:hover{box-shadow:0 0 32px rgba(79,142,255,.15),0 0 70px rgba(79,142,255,.06);border-color:rgba(79,142,255,.38)!important}
+  .proj-card[data-cat="Discord Bots"]:hover{box-shadow:0 0 32px rgba(124,92,255,.15),0 0 70px rgba(124,92,255,.06);border-color:rgba(124,92,255,.38)!important}
+
+  .skill-fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
+
+  .cursor{display:inline-block;width:2px;height:1em;background:#00d4ff;vertical-align:middle;margin-left:3px;animation:blink 1s step-end infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+  .live-dot{width:8px;height:8px;border-radius:50%;background:#00ffb3;box-shadow:0 0 8px #00ffb3;animation:livepulse 1.8s ease-in-out infinite;flex-shrink:0}
+  @keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.4)}}
+
+  .fade-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .75s cubic-bezier(.22,1,.36,1)}
+  .fade-up.visible{opacity:1;transform:translateY(0)}
+  .d1{transition-delay:.06s}.d2{transition-delay:.13s}.d3{transition-delay:.20s}
+  .d4{transition-delay:.27s}.d5{transition-delay:.34s}.d6{transition-delay:.41s}
+  .d7{transition-delay:.48s}.d8{transition-delay:.55s}.d9{transition-delay:.62s}
+
+  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.35),transparent)}
+
+  .btn-grad{background:linear-gradient(90deg,#00d4ff,#4f8eff);transition:opacity .2s,transform .15s}
+  .btn-grad:hover{opacity:.88;transform:scale(1.04)}
+  .btn-grad:active{transform:scale(.97)}
+  .btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);transition:background .2s,border-color .2s,transform .15s}
+  .btn-outline:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.28);transform:scale(1.04)}
+
+  .bounce{animation:bounce 2s ease-in-out infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+  .pill-active-all{background:linear-gradient(90deg,#00d4ff,#4f8eff)!important;color:#000!important;border-color:transparent!important}
+  .pill-active-qa{background:linear-gradient(90deg,#00d4ff,#00aacc)!important;color:#000!important;border-color:transparent!important}
+  .pill-active-gfx{background:linear-gradient(90deg,#4f8eff,#2255cc)!important;color:#000!important;border-color:transparent!important}
+  .pill-active-bot{background:linear-gradient(90deg,#7c5cff,#4422cc)!important;color:#000!important;border-color:transparent!important}
+
+  .pill{cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s}
+  .pill:not([class*="pill-active"]):hover{border-color:rgba(255,255,255,.25)!important;color:#fff!important;transform:scale(1.04)}
+
+  #mobile-menu{display:none}
+  #mobile-menu.open{display:flex}
+
+  .tag-qa{background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.22)}
+  .tag-gfx{background:rgba(79,142,255,.1);color:#7aaaff;border:1px solid rgba(79,142,255,.22)}
+  .tag-bot{background:rgba(124,92,255,.1);color:#b09cff;border:1px solid rgba(124,92,255,.22)}
+
+  .stat-strip{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.1)}
+
+  .social-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);transition:background .2s,border-color .2s,transform .2s;text-decoration:none}
+  .social-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);transform:scale(1.12)}
+
+  .view-link{transition:gap .2s}
+  .proj-card:hover .view-link{gap:10px!important}
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════╗
+     ║   CENTRALIZED DATA — edit only this block   ║
+     ╚══════════════════════════════════════════════╝ -->
+<script>
+const DATA = {
+  name:    "V. Vishnu",
+  short:   "Vishnu",
+  title:   "Roblox QA Tester & Technical Creative",
   tagline: "Breaking games before players do.",
   discord: "vishnu.rblx",
+  roles:   ["QA Tester.", "Bug Hunter.", "GFX Artist.", "Bot Developer.", "Tech Creative."],
   socials: {
-    github: "https://github.com/",
-    discord: "https://discord.com/",
-    website: "#",
+    github:   "https://github.com/",
+    discord:  "https://discord.com/",
+    website:  "#"
   },
+  stats: [
+    { n:"200+", label:"Bugs Logged"      },
+    { n:"15+",  label:"Games Tested"     },
+    { n:"9+",   label:"Projects Shipped" },
+    { n:"3+",   label:"Bots Deployed"    }
+  ],
   projects: [
     {
-      id: 1,
-      category: "QA Testing",
-      title: "Blox Royale – Full QA Cycle",
-      description: "End-to-end quality assurance for a battle-royale Roblox title. Logged 200+ bugs across mechanics, physics, and exploits.",
-      tags: ["Bug Tracking", "Regression", "Exploit Testing"],
-      link: "#",
-      status: "Completed",
+      id:1, cat:"QA Testing",
+      title:"Blox Royale – Full QA Cycle",
+      desc:"End-to-end quality assurance for a battle-royale title. Logged 200+ bugs across physics, mechanics, and exploit vectors.",
+      tags:["Bug Tracking","Regression","Exploit Testing"],
+      status:"Completed", link:"#"
     },
     {
-      id: 2,
-      category: "QA Testing",
-      title: "RpgVerse – Combat System Audit",
-      description: "Deep-dive into hitbox accuracy, ability cooldowns, and edge-case crashes across 14 combat classes.",
-      tags: ["Hitbox QA", "Performance", "Edge Cases"],
-      link: "#",
-      status: "Completed",
+      id:2, cat:"QA Testing",
+      title:"RpgVerse – Combat System Audit",
+      desc:"Deep-dive into hitbox accuracy, ability cooldowns, and edge-case crashes across 14 distinct combat classes.",
+      tags:["Hitbox QA","Performance","Edge Cases"],
+      status:"Completed", link:"#"
     },
     {
-      id: 3,
-      category: "QA Testing",
-      title: "Simulator X – Economy Balance",
-      description: "Economy simulation testing to prevent inflation exploits, duplication glitches, and unfair progression loops.",
-      tags: ["Economy", "Anti-Cheat", "Balancing"],
-      link: "#",
-      status: "Ongoing",
+      id:3, cat:"QA Testing",
+      title:"Simulator X – Economy Balance",
+      desc:"Economy simulation testing to prevent inflation exploits, item duplication glitches, and unfair progression loops.",
+      tags:["Economy","Anti-Cheat","Balancing"],
+      status:"Ongoing", link:"#"
     },
     {
-      id: 4,
-      category: "GFX / Photoshop",
-      title: "NeonRift – Game Thumbnail Series",
-      description: "Cinematic GFX thumbnails using Blender renders + Photoshop post-processing. Achieved 18% higher CTR.",
-      tags: ["Photoshop", "Blender", "Thumbnails"],
-      link: "#",
-      status: "Completed",
+      id:4, cat:"GFX / Photoshop",
+      title:"NeonRift – Thumbnail Series",
+      desc:"Cinematic GFX thumbnails using Blender renders + Photoshop post-processing. Achieved an 18% higher click-through rate.",
+      tags:["Photoshop","Blender","Thumbnails"],
+      status:"Completed", link:"#"
     },
     {
-      id: 5,
-      category: "GFX / Photoshop",
-      title: "Group Branding – ShadowCraft Studios",
-      description: "Full brand identity for a Roblox dev group: logo, banner, icon set, and UI mockups.",
-      tags: ["Branding", "Logo Design", "UI Mockups"],
-      link: "#",
-      status: "Completed",
+      id:5, cat:"GFX / Photoshop",
+      title:"ShadowCraft Studios – Full Branding",
+      desc:"Complete group identity: logo, banner, icon set, and UI mockups for a mid-size Roblox development studio.",
+      tags:["Branding","Logo Design","UI Mockups"],
+      status:"Completed", link:"#"
     },
     {
-      id: 6,
-      category: "GFX / Photoshop",
-      title: "Event Poster Pack – Seasonal 2024",
-      description: "Series of 6 event promotional posters with layered particle effects and dynamic typography.",
-      tags: ["Posters", "Typography", "FX"],
-      link: "#",
-      status: "Completed",
+      id:6, cat:"GFX / Photoshop",
+      title:"Seasonal Event Poster Pack 2024",
+      desc:"Six promotional event posters with layered particle effects, glowing type, and seasonal colour grading.",
+      tags:["Posters","Typography","VFX"],
+      status:"Completed", link:"#"
     },
     {
-      id: 7,
-      category: "Discord Bots",
-      title: "VerifyBot – Roblox Link System",
-      description: "Full OAuth2 Roblox verification bot with role assignment, rank sync, and group wall monitoring.",
-      tags: ["OAuth2", "Role Sync", "Node.js"],
-      link: "#",
-      status: "Deployed",
+      id:7, cat:"Discord Bots",
+      title:"VerifyBot – Roblox Link System",
+      desc:"Full OAuth2 Roblox verification bot with automatic role assignment, rank syncing, and group wall monitoring.",
+      tags:["OAuth2","Role Sync","Node.js"],
+      status:"Deployed", link:"#"
     },
     {
-      id: 8,
-      category: "Discord Bots",
-      title: "TicketSage – Support Automation",
-      description: "Intelligent ticket bot with transcript logging, priority queuing, and staff performance dashboards.",
-      tags: ["Automation", "Logging", "Dashboard"],
-      link: "#",
-      status: "Deployed",
+      id:8, cat:"Discord Bots",
+      title:"TicketSage – Support Automation",
+      desc:"Intelligent support-ticket bot with HTML transcript logging, priority queuing, and staff performance dashboards.",
+      tags:["Automation","Logging","Dashboard"],
+      status:"Deployed", link:"#"
     },
     {
-      id: 9,
-      category: "Discord Bots",
-      title: "AuditGuard – Moderation Suite",
-      description: "Advanced moderation bot with AI-assisted content filtering, audit logs, and infraction tracking.",
-      tags: ["Moderation", "AI Filter", "Logging"],
-      link: "#",
-      status: "Deployed",
-    },
+      id:9, cat:"Discord Bots",
+      title:"AuditGuard – Moderation Suite",
+      desc:"Advanced moderation bot with AI-assisted content filtering, full audit logs, and a persistent infraction tracker.",
+      tags:["Moderation","AI Filter","Logging"],
+      status:"Deployed", link:"#"
+    }
   ],
   skills: [
-    { label: "Roblox Studio", icon: Gamepad2, level: 95, color: "#00d4ff", desc: "Studio builds, scripting, place file QA & environment testing." },
-    { label: "Photoshop / GFX", icon: Palette, level: 88, color: "#4f8eff", desc: "Cinematic thumbnails, branding kits, and promotional art." },
-    { label: "Bot Scripting", icon: Code2, level: 82, color: "#7c5cff", desc: "Discord.js bots with Roblox API integrations and dashboards." },
-    { label: "Bug Documentation", icon: Target, level: 97, color: "#00ffb3", desc: "Structured bug reports with repro steps, severity tags & videos." },
-    { label: "Exploit Testing", icon: Shield, level: 90, color: "#ff6b6b", desc: "Identifying and cataloguing exploits before public release." },
-    { label: "UI/UX Critique", icon: Layers, level: 85, color: "#ffcc00", desc: "Player-perspective UX feedback and accessibility reviews." },
-  ],
+    { label:"Roblox Studio",     pct:95, color:"#00d4ff", icon:"gamepad-2", desc:"QA, scripting, place-file testing & environment audits."       },
+    { label:"Photoshop / GFX",   pct:88, color:"#4f8eff", icon:"palette",   desc:"Cinematic thumbnails, full branding kits & promo art."          },
+    { label:"Bot Scripting",     pct:82, color:"#7c5cff", icon:"code-2",    desc:"Discord.js bots with Roblox API integrations & dashboards."     },
+    { label:"Bug Documentation", pct:97, color:"#00ffb3", icon:"target",    desc:"Structured reports with repro steps, severity tags & video."    },
+    { label:"Exploit Testing",   pct:90, color:"#ff6b6b", icon:"shield",    desc:"Identifying & cataloguing exploits before public launch."       },
+    { label:"UI / UX Critique",  pct:85, color:"#ffcc00", icon:"layers",    desc:"Player-perspective UX feedback & accessibility reviews."        }
+  ]
 };
+</script>
 
-// ============================================================
-//  CATEGORY CONFIG
-// ============================================================
-const CATEGORIES = ["All", "QA Testing", "GFX / Photoshop", "Discord Bots"];
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;transition:background .35s,border-bottom .35s">
 
-const CATEGORY_META = {
-  "QA Testing":      { icon: Gamepad2, color: "#00d4ff" },
-  "GFX / Photoshop": { icon: Image,    color: "#4f8eff" },
-  "Discord Bots":    { icon: Bot,       color: "#7c5cff" },
-};
+  <a href="#hero" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+    <div class="btn-grad" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i data-lucide="zap" style="width:15px;height:15px;color:#000;stroke-width:2.5"></i>
+    </div>
+    <span id="nav-name" class="font-syne" style="font-weight:900;color:#fff;font-size:1.1rem;letter-spacing:-.02em"></span>
+  </a>
 
-// ============================================================
-//  TINY HELPERS
-// ============================================================
-const useTypingEffect = (words, speed = 80, pause = 2200) => {
-  const [display, setDisplay] = useState("");
-  const [idx, setIdx] = useState(0);
-  const [charIdx, setCharIdx] = useState(0);
-  const [deleting, setDeleting] = useState(false);
-  useEffect(() => {
-    const word = words[idx];
-    const timeout = setTimeout(() => {
-      if (!deleting) {
-        setDisplay(word.slice(0, charIdx + 1));
-        if (charIdx + 1 === word.length) setTimeout(() => setDeleting(true), pause);
-        else setCharIdx(c => c + 1);
-      } else {
-        setDisplay(word.slice(0, charIdx - 1));
-        if (charIdx - 1 === 0) { setDeleting(false); setIdx(i => (i + 1) % words.length); }
-        else setCharIdx(c => c - 1);
-      }
-    }, deleting ? speed / 2 : speed);
-    return () => clearTimeout(timeout);
-  }, [charIdx, deleting, idx, words, speed, pause]);
-  return display;
-};
+  <div class="hidden md:flex" style="align-items:center;gap:2rem">
+    <a href="#projects" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Projects</a>
+    <a href="#skills"   style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Skills</a>
+    <a href="#contact"  style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Contact</a>
+  </div>
 
-// ============================================================
-//  GLASS NAVBAR
-// ============================================================
-const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [copied, setCopied] = useState(false);
+  <div style="display:flex;align-items:center;gap:8px">
+    <button id="nav-copy-btn" onclick="copyDiscord('nav')"
+      class="btn-grad" style="display:flex;align-items:center;gap:8px;padding:.5rem 1rem;border-radius:99px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;color:#000;cursor:pointer;border:none">
+      <i data-lucide="copy" id="nav-icon" style="width:13px;height:13px;flex-shrink:0"></i>
+      <span id="nav-label" class="hidden md:inline"></span>
+    </button>
+    <button onclick="toggleMenu()" id="hamburger"
+      class="glass md:hidden" style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:rgba(255,255,255,.05)">
+      <i data-lucide="menu" style="width:16px;height:16px;color:#fff"></i>
+    </button>
+  </div>
+</nav>
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+<!-- Mobile menu -->
+<div id="mobile-menu" class="glass" style="position:fixed;top:68px;left:1rem;right:1rem;z-index:40;border-radius:1rem;padding:1rem;flex-direction:column;gap:.5rem">
+  <a href="#projects" onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">Projects</a>
+  <a href="#skills"   onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">Skills</a>
+  <a href="#contact"  onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">Contact</a>
+</div>
 
-  const copyDiscord = () => {
-    navigator.clipboard.writeText(CONST_DATA.discord);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero" class="grid-bg" style="position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:0 1.5rem">
+  <div class="hero-orb"></div>
 
-  return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4"
-      style={{
-        background: scrolled
-          ? "rgba(0,0,0,0.7)"
-          : "transparent",
-        backdropFilter: scrolled ? "blur(20px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(0,212,255,0.1)" : "none",
-        transition: "all 0.4s ease",
-      }}
-    >
-      {/* Logo */}
-      <a href="#hero" className="flex items-center gap-2 group">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-          style={{ background: "linear-gradient(135deg,#00d4ff,#4f8eff)" }}>
-          <Zap size={16} color="#000" strokeWidth={2.5} />
-        </div>
-        <span className="font-black text-white text-lg tracking-tight" style={{ fontFamily: "'Syne', sans-serif" }}>
-          {CONST_DATA.shortName}
-        </span>
-      </a>
+  <div style="position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:56rem;width:100%">
 
-      {/* Nav links */}
-      <div className="hidden md:flex items-center gap-8">
-        {["Projects", "Skills", "Contact"].map(s => (
-          <a key={s} href={`#${s.toLowerCase()}`}
-            className="text-sm font-medium text-white/50 hover:text-white transition-colors duration-200"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            {s}
-          </a>
-        ))}
-      </div>
+    <!-- Live badge -->
+    <div class="fade-up visible" style="display:inline-flex;align-items:center;gap:8px;padding:.375rem 1rem;border-radius:99px;margin-bottom:2rem;background:rgba(0,255,179,.06);border:1px solid rgba(0,255,179,.22)">
+      <div class="live-dot"></div>
+      <span class="font-dm" style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00ffb3">Available for Work</span>
+    </div>
 
-      {/* Discord copy */}
-      <motion.button
-        whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-        onClick={copyDiscord}
-        className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-black"
-        style={{ background: copied ? "#00ffb3" : "linear-gradient(90deg,#00d4ff,#4f8eff)", transition: "background 0.3s" }}>
-        {copied ? <Check size={14} /> : <Copy size={14} />}
-        <span className="hidden sm:inline">{copied ? "Copied!" : CONST_DATA.discord}</span>
-      </motion.button>
-    </motion.nav>
-  );
-};
+    <!-- Name -->
+    <h1 id="hero-name" class="font-syne grad-white fade-up visible d1"
+      style="font-weight:900;line-height:1;margin-bottom:1rem;font-size:clamp(4rem,13vw,9.5rem);letter-spacing:-.03em"></h1>
 
-// ============================================================
-//  HERO
-// ============================================================
-const Hero = () => {
-  const typed = useTypingEffect(["QA Tester.", "GFX Artist.", "Bot Developer.", "Bug Hunter."]);
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 500], [0, 120]);
+    <!-- Typewriter -->
+    <div class="fade-up visible d2" style="display:flex;align-items:center;gap:4px;margin-bottom:1.25rem;min-height:2.25rem">
+      <span id="typewriter-text" class="font-dm grad-cyan" style="font-weight:600;font-size:clamp(1.1rem,3vw,1.5rem)"></span>
+      <span class="cursor"></span>
+    </div>
 
-  return (
-    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6">
-      {/* Ambient grid */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: "linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)",
-        backgroundSize: "60px 60px",
-      }} />
+    <!-- Tagline -->
+    <p id="hero-tagline" class="font-dm fade-up visible d3"
+      style="font-size:1.1rem;margin-bottom:3rem;max-width:28rem;color:rgba(255,255,255,.4)"></p>
 
-      {/* Radial glow */}
-      <motion.div style={{ y }} className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-        <div style={{
-          width: 700, height: 700,
-          background: "radial-gradient(circle, rgba(0,212,255,0.12) 0%, rgba(79,142,255,0.06) 40%, transparent 70%)",
-          borderRadius: "50%", filter: "blur(40px)",
-        }} />
-      </motion.div>
+    <!-- CTAs -->
+    <div class="fade-up visible d4" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem">
+      <a href="#projects" class="btn-grad font-dm" style="font-weight:700;color:#000;font-size:.875rem;padding:.875rem 2rem;border-radius:99px;text-decoration:none;display:inline-block">View My Work</a>
+      <a href="#contact"  class="btn-outline font-dm" style="font-weight:700;color:rgba(255,255,255,.7);font-size:.875rem;padding:.875rem 2rem;border-radius:99px;text-decoration:none;display:inline-block">Get in Touch</a>
+    </div>
+  </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
-        {/* Live badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 border"
-          style={{ background: "rgba(0,255,179,0.06)", borderColor: "rgba(0,255,179,0.2)" }}>
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#00ffb3", boxShadow: "0 0 8px #00ffb3" }} />
-          <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: "#00ffb3", fontFamily: "'DM Sans', sans-serif" }}>
-            Available for Work
-          </span>
-        </motion.div>
+  <!-- Scroll cue -->
+  <div class="fade-up visible d5" style="position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px">
+    <span class="font-dm" style="font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2)">Scroll</span>
+    <div class="bounce"><i data-lucide="chevron-down" style="width:15px;height:15px;color:rgba(255,255,255,.2)"></i></div>
+  </div>
+</section>
 
-        {/* Name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.9, ease: [0.22,1,0.36,1] }}
-          className="font-black text-white leading-none mb-4"
-          style={{ fontSize: "clamp(4rem,12vw,9rem)", fontFamily: "'Syne', sans-serif", letterSpacing: "-0.03em" }}>
-          <span style={{ background: "linear-gradient(135deg,#fff 40%,rgba(255,255,255,0.3))", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            {CONST_DATA.shortName}
-          </span>
-        </motion.h1>
+<!-- ══════════════ PROJECTS ══════════════ -->
+<section id="projects" style="padding:6rem 1.5rem;max-width:80rem;margin:0 auto">
 
-        {/* Typed role */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-          className="flex items-center gap-2 mb-6 h-9">
-          <span className="text-xl md:text-2xl font-medium" style={{ color: "#00d4ff", fontFamily: "'DM Sans', sans-serif" }}>
-            {typed}
-          </span>
-          <span className="w-0.5 h-6 animate-pulse" style={{ background: "#00d4ff" }} />
-        </motion.div>
+  <div class="fade-up" style="margin-bottom:3rem">
+    <p class="font-dm" style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#00d4ff;margin-bottom:.75rem">Portfolio</p>
+    <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em">Selected Work</h2>
+  </div>
 
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }}
-          className="text-lg text-white/40 mb-12 max-w-md"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}>
-          {CONST_DATA.tagline}
-        </motion.p>
+  <!-- Filter pills -->
+  <div id="filter-bar" class="fade-up d1" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem">
+    <button onclick="filterProjects('All')" data-f="All"
+      class="pill pill-active-all font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px">All</button>
+    <button onclick="filterProjects('QA Testing')" data-f="QA Testing"
+      class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
+      <i data-lucide="gamepad-2" style="width:13px;height:13px"></i>QA Testing</button>
+    <button onclick="filterProjects('GFX / Photoshop')" data-f="GFX / Photoshop"
+      class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
+      <i data-lucide="image" style="width:13px;height:13px"></i>GFX / Photoshop</button>
+    <button onclick="filterProjects('Discord Bots')" data-f="Discord Bots"
+      class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
+      <i data-lucide="bot" style="width:13px;height:13px"></i>Discord Bots</button>
+  </div>
 
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
-          className="flex flex-wrap items-center justify-center gap-4">
-          <a href="#projects"
-            className="px-8 py-3.5 rounded-full font-bold text-black text-sm transition-transform hover:scale-105 active:scale-95"
-            style={{ background: "linear-gradient(90deg,#00d4ff,#4f8eff)", fontFamily: "'DM Sans', sans-serif" }}>
-            View My Work
-          </a>
-          <a href="#contact"
-            className="px-8 py-3.5 rounded-full font-bold text-sm border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-all"
-            style={{ background: "rgba(255,255,255,0.04)", fontFamily: "'DM Sans', sans-serif" }}>
-            Get in Touch
-          </a>
-        </motion.div>
-      </div>
+  <!-- Grid -->
+  <div id="project-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:1.25rem"></div>
+</section>
 
-      {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <span className="text-xs tracking-widest text-white/20 uppercase" style={{ fontFamily: "'DM Sans',sans-serif" }}>Scroll</span>
-        <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-          <ChevronDown size={16} className="text-white/20" />
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-};
+<!-- ══════════════ SKILLS ══════════════ -->
+<section id="skills" style="padding:6rem 1.5rem;max-width:80rem;margin:0 auto">
 
-// ============================================================
-//  PROJECT CARD
-// ============================================================
-const ProjectCard = ({ project, index }) => {
-  const meta = CATEGORY_META[project.category] || {};
-  const Icon = meta.icon || Star;
-  const color = meta.color || "#fff";
+  <div class="fade-up" style="margin-bottom:3rem">
+    <p class="font-dm" style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#4f8eff;margin-bottom:.75rem">Expertise</p>
+    <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em">Skill Matrix</h2>
+  </div>
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      transition={{ duration: 0.45, delay: index * 0.06, ease: [0.22,1,0.36,1] }}
-      className="group relative flex flex-col rounded-2xl p-6 overflow-hidden cursor-pointer"
-      style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
-        backdropFilter: "blur(12px)",
-        transition: "border-color 0.3s, box-shadow 0.3s",
-      }}
-      whileHover={{
-        boxShadow: `0 0 30px ${color}22, 0 0 60px ${color}0a`,
-        borderColor: `${color}55`,
-      }}>
-      {/* Status dot */}
-      <div className="absolute top-4 right-4 flex items-center gap-1.5">
-        <span className="w-1.5 h-1.5 rounded-full" style={{ background: project.status === "Ongoing" || project.status === "Deployed" ? "#00ffb3" : "#fff3", boxShadow: project.status !== "Completed" ? `0 0 6px #00ffb3` : "none" }} />
-        <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "'DM Sans',sans-serif" }}>{project.status}</span>
-      </div>
+  <div id="skill-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:1.25rem;margin-bottom:1.5rem"></div>
 
-      {/* Icon */}
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-        style={{ background: `${color}18`, border: `1px solid ${color}30` }}>
-        <Icon size={18} color={color} />
-      </div>
+  <div class="stat-strip fade-up" style="border-radius:1rem;padding:2rem">
+    <div id="stat-strip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1.5rem"></div>
+  </div>
+</section>
 
-      {/* Title */}
-      <h3 className="font-bold text-white mb-2 text-base pr-12" style={{ fontFamily: "'Syne',sans-serif" }}>
-        {project.title}
-      </h3>
+<!-- ══════════════ FOOTER / CONTACT ══════════════ -->
+<footer id="contact" style="padding:6rem 1.5rem;max-width:80rem;margin:0 auto">
 
-      {/* Description */}
-      <p className="text-sm text-white/40 leading-relaxed mb-4 flex-1" style={{ fontFamily: "'DM Sans',sans-serif" }}>
-        {project.description}
-      </p>
+  <div class="divider" style="margin-bottom:5rem"></div>
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-1.5 mb-5">
-        {project.tags.map(t => (
-          <span key={t} className="px-2 py-0.5 rounded-md text-xs font-medium"
-            style={{ background: `${color}12`, color: color, border: `1px solid ${color}25`, fontFamily: "'DM Sans',sans-serif" }}>
-            {t}
-          </span>
-        ))}
-      </div>
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:3rem">
 
-      {/* Link */}
-      <a href={project.link}
-        className="flex items-center gap-1.5 text-xs font-semibold transition-all group-hover:gap-2.5"
-        style={{ color, fontFamily: "'DM Sans',sans-serif" }}>
-        View Project <ExternalLink size={12} />
-      </a>
-    </motion.div>
-  );
-};
+    <!-- Left -->
+    <div class="fade-up">
+      <p class="font-dm" style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#00d4ff;margin-bottom:.75rem">Let's Connect</p>
+      <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em;line-height:1.1;margin-bottom:1.5rem">Got a project<br>in mind?</h2>
+      <button id="footer-copy-btn" onclick="copyDiscord('footer')"
+        class="btn-grad font-dm" style="display:inline-flex;align-items:center;gap:10px;padding:.875rem 1.5rem;border-radius:99px;font-weight:700;color:#000;font-size:.875rem;cursor:pointer;border:none">
+        <i data-lucide="copy" id="footer-icon" style="width:15px;height:15px;flex-shrink:0"></i>
+        <span id="footer-label"></span>
+      </button>
+    </div>
 
-// ============================================================
-//  PROJECT GALLERY
-// ============================================================
-const Projects = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
+    <!-- Right -->
+    <div class="fade-up d2" style="display:flex;flex-direction:column;align-items:flex-start;gap:1rem">
+      <div id="social-row" style="display:flex;gap:.75rem"></div>
+      <p id="footer-cr" class="font-dm" style="font-size:.75rem;color:rgba(255,255,255,.2)"></p>
+    </div>
+  </div>
+</footer>
 
-  const filtered = activeCategory === "All"
-    ? CONST_DATA.projects
-    : CONST_DATA.projects.filter(p => p.category === activeCategory);
+<!-- ══════════════ MAIN SCRIPT ══════════════ -->
+<script>
+/* ── Static text ── */
+document.getElementById('nav-name').textContent    = DATA.short;
+document.getElementById('nav-label').textContent   = DATA.discord;
+document.getElementById('hero-name').textContent   = DATA.short;
+document.getElementById('hero-tagline').textContent= DATA.tagline;
+document.getElementById('footer-label').textContent= 'Copy Discord — ' + DATA.discord;
+document.getElementById('footer-cr').textContent   = '© ' + new Date().getFullYear() + ' ' + DATA.name + ' — All rights reserved.';
 
-  return (
-    <section id="projects" className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }} transition={{ duration: 0.7 }}
-        className="mb-12">
-        <p className="text-xs tracking-widest uppercase mb-3 font-semibold" style={{ color: "#00d4ff", fontFamily: "'DM Sans',sans-serif" }}>Portfolio</p>
-        <h2 className="font-black text-white text-4xl md:text-5xl" style={{ fontFamily: "'Syne',sans-serif", letterSpacing: "-0.02em" }}>
-          Selected Work
-        </h2>
-      </motion.div>
+/* ── Icon init ── */
+function icons(){ if(window.lucide) lucide.createIcons(); }
 
-      {/* Filter pills */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }} transition={{ delay: 0.15 }}
-        className="flex flex-wrap gap-2 mb-10">
-        {CATEGORIES.map(cat => {
-          const active = activeCategory === cat;
-          const meta = CATEGORY_META[cat];
-          const color = meta?.color || "#fff";
-          const Icon = meta?.icon;
-          return (
-            <motion.button key={cat} onClick={() => setActiveCategory(cat)}
-              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all"
-              style={{
-                fontFamily: "'DM Sans',sans-serif",
-                background: active ? (meta ? `linear-gradient(90deg,${color}cc,${color}88)` : "linear-gradient(90deg,#00d4ff,#4f8eff)") : "rgba(255,255,255,0.05)",
-                color: active ? "#000" : "rgba(255,255,255,0.5)",
-                border: active ? "none" : "1px solid rgba(255,255,255,0.08)",
-              }}>
-              {Icon && <Icon size={13} />}
-              {cat}
-            </motion.button>
-          );
-        })}
-      </motion.div>
+/* ── Navbar scroll ── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
 
-      {/* Grid */}
-      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
-          ))}
-        </AnimatePresence>
-      </motion.div>
-    </section>
-  );
-};
-
-// ============================================================
-//  SKILLS BENTO GRID
-// ============================================================
-const Skills = () => {
-  return (
-    <section id="skills" className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }} transition={{ duration: 0.7 }}
-        className="mb-12">
-        <p className="text-xs tracking-widest uppercase mb-3 font-semibold" style={{ color: "#4f8eff", fontFamily: "'DM Sans',sans-serif" }}>Expertise</p>
-        <h2 className="font-black text-white text-4xl md:text-5xl" style={{ fontFamily: "'Syne',sans-serif", letterSpacing: "-0.02em" }}>
-          Skill Matrix
-        </h2>
-      </motion.div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {CONST_DATA.skills.map((skill, i) => {
-          const Icon = skill.icon;
-          return (
-            <motion.div key={skill.label}
-              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.6 }}
-              whileHover={{ scale: 1.02, boxShadow: `0 0 40px ${skill.color}18` }}
-              className="rounded-2xl p-6 flex flex-col gap-4"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                backdropFilter: "blur(12px)",
-              }}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: `${skill.color}18`, border: `1px solid ${skill.color}30` }}>
-                  <Icon size={18} color={skill.color} />
-                </div>
-                <div>
-                  <p className="font-bold text-white text-sm" style={{ fontFamily: "'Syne',sans-serif" }}>{skill.label}</p>
-                  <p className="text-xs font-mono" style={{ color: skill.color }}>{skill.level}%</p>
-                </div>
-              </div>
-
-              {/* Bar */}
-              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                <motion.div className="h-full rounded-full"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${skill.level}%` }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: i * 0.1, ease: [0.22,1,0.36,1] }}
-                  style={{ background: `linear-gradient(90deg, ${skill.color}, ${skill.color}88)` }} />
-              </div>
-
-              <p className="text-xs text-white/35 leading-relaxed" style={{ fontFamily: "'DM Sans',sans-serif" }}>
-                {skill.desc}
-              </p>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Big stat strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }} transition={{ delay: 0.3 }}
-        className="mt-6 rounded-2xl p-8 grid grid-cols-2 md:grid-cols-4 gap-6"
-        style={{ background: "rgba(0,212,255,0.04)", border: "1px solid rgba(0,212,255,0.1)", backdropFilter: "blur(12px)" }}>
-        {[
-          { n: "200+", label: "Bugs Logged" },
-          { n: "15+", label: "Games Tested" },
-          { n: "9+", label: "Projects Shipped" },
-          { n: "3+", label: "Bots Deployed" },
-        ].map(stat => (
-          <div key={stat.label} className="flex flex-col items-center gap-1 text-center">
-            <span className="font-black text-3xl md:text-4xl" style={{ fontFamily: "'Syne',sans-serif", background: "linear-gradient(135deg,#00d4ff,#4f8eff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              {stat.n}
-            </span>
-            <span className="text-xs text-white/35 font-medium uppercase tracking-widest" style={{ fontFamily: "'DM Sans',sans-serif" }}>
-              {stat.label}
-            </span>
-          </div>
-        ))}
-      </motion.div>
-    </section>
-  );
-};
-
-// ============================================================
-//  CONTACT / FOOTER
-// ============================================================
-const Footer = () => {
-  const [copied, setCopied] = useState(false);
-
-  const copyDiscord = () => {
-    navigator.clipboard.writeText(CONST_DATA.discord);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <footer id="contact" className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
-      {/* Divider */}
-      <div className="w-full h-px mb-20" style={{ background: "linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent)" }} />
-
-      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12">
-        {/* Left */}
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <p className="text-xs tracking-widest uppercase mb-3 font-semibold" style={{ color: "#00d4ff", fontFamily: "'DM Sans',sans-serif" }}>Let's Connect</p>
-            <h2 className="font-black text-white text-4xl md:text-5xl mb-6 leading-tight" style={{ fontFamily: "'Syne',sans-serif", letterSpacing: "-0.02em" }}>
-              Got a project<br />in mind?
-            </h2>
-            <motion.button
-              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              onClick={copyDiscord}
-              className="flex items-center gap-3 px-6 py-3.5 rounded-full font-bold text-black text-sm"
-              style={{ background: copied ? "#00ffb3" : "linear-gradient(90deg,#00d4ff,#4f8eff)", fontFamily: "'DM Sans',sans-serif", transition: "background 0.3s" }}>
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-              {copied ? "Copied to Clipboard!" : `Copy Discord — ${CONST_DATA.discord}`}
-            </motion.button>
-          </motion.div>
-        </div>
-
-        {/* Right */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ delay: 0.2 }}
-          className="flex flex-col items-start md:items-end gap-6">
-          <div className="flex gap-4">
-            {[
-              { href: CONST_DATA.socials.github,   Icon: Github,         label: "GitHub" },
-              { href: CONST_DATA.socials.discord,  Icon: MessageSquare,  label: "Discord" },
-              { href: CONST_DATA.socials.website,  Icon: Globe,          label: "Website" },
-            ].map(({ href, Icon, label }) => (
-              <a key={label} href={href} target="_blank" rel="noreferrer"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white/40 hover:text-white transition-all"
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <Icon size={16} />
-              </a>
-            ))}
-          </div>
-          <p className="text-xs text-white/20" style={{ fontFamily: "'DM Sans',sans-serif" }}>
-            © {new Date().getFullYear()} {CONST_DATA.name} — All rights reserved.
-          </p>
-        </motion.div>
-      </div>
-    </footer>
-  );
-};
-
-// ============================================================
-//  APP ROOT
-// ============================================================
-export default function App() {
-  return (
-    <>
-      {/* Google Fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { background: #000; color: #fff; overflow-x: hidden; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #00d4ff44; border-radius: 99px; }
-        ::selection { background: #00d4ff33; color: #00d4ff; }
-      `}</style>
-      <div style={{ background: "#000", minHeight: "100vh" }}>
-        <Navbar />
-        <Hero />
-        <Projects />
-        <Skills />
-        <Footer />
-      </div>
-    </>
-  );
+/* ── Mobile menu ── */
+function toggleMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
 }
+document.addEventListener('click', e=>{
+  const m = document.getElementById('mobile-menu');
+  const h = document.getElementById('hamburger');
+  if(!m.contains(e.target) && !h.contains(e.target)) m.classList.remove('open');
+});
+
+/* ── Typewriter ── */
+(()=>{
+  const el = document.getElementById('typewriter-text');
+  let wi=0, ci=0, del=false;
+  function tick(){
+    const w = DATA.roles[wi];
+    el.textContent = w.slice(0,ci);
+    if(!del){ ci++; if(ci>w.length){del=true;setTimeout(tick,2000);return;} }
+    else     { ci--; if(ci<0){ci=0;del=false;wi=(wi+1)%DATA.roles.length;setTimeout(tick,350);return;} }
+    setTimeout(tick, del?45:85);
+  }
+  tick();
+})();
+
+/* ── Discord copy ── */
+const COPY_ORIG = { nav:'nav', footer:'footer' };
+function copyDiscord(prefix){
+  navigator.clipboard.writeText(DATA.discord).catch(()=>{});
+
+  const btn  = document.getElementById(prefix+'-copy-btn') || document.getElementById(prefix+'_copy_btn') || (prefix==='footer' ? document.getElementById('footer-copy-btn') : document.getElementById('nav-copy-btn'));
+  const iconEl = document.getElementById(prefix+'-icon') || document.getElementById(prefix+'_icon');
+  const lblEl  = document.getElementById(prefix+'-label') || document.getElementById(prefix+'_label');
+
+  // Swap to green
+  if(btn) btn.style.background='#00ffb3';
+  if(lblEl) { lblEl._orig = lblEl.textContent; lblEl.textContent='Copied!'; }
+  if(iconEl){ iconEl.setAttribute('data-lucide','check'); icons(); }
+
+  setTimeout(()=>{
+    if(btn) btn.style.background='';
+    if(lblEl && lblEl._orig) lblEl.textContent = lblEl._orig;
+    if(iconEl){ iconEl.setAttribute('data-lucide','copy'); icons(); }
+  }, 2200);
+}
+
+/* ── Category meta ── */
+const CAT_META = {
+  'QA Testing':      { icon:'gamepad-2', color:'#00d4ff', tc:'tag-qa'  },
+  'GFX / Photoshop': { icon:'image',     color:'#4f8eff', tc:'tag-gfx' },
+  'Discord Bots':    { icon:'bot',       color:'#7c5cff', tc:'tag-bot' }
+};
+const STATUS_CLR = { Completed:'rgba(255,255,255,.25)', Ongoing:'#00ffb3', Deployed:'#00ffb3' };
+
+/* ── Render projects ── */
+function renderProjects(filter){
+  const grid = document.getElementById('project-grid');
+  grid.innerHTML = '';
+  const list = filter==='All' ? DATA.projects : DATA.projects.filter(p=>p.cat===filter);
+  list.forEach((p,i)=>{
+    const m = CAT_META[p.cat]||{};
+    const sc = STATUS_CLR[p.status]||'rgba(255,255,255,.25)';
+    const glow = p.status!=='Completed';
+    const card = document.createElement('div');
+    card.className = 'proj-card glass fade-up';
+    card.dataset.cat = p.cat;
+    card.style.cssText = 'border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;transition-delay:'+(i*.07)+'s';
+    card.innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem">
+        <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${m.color}1a;border:1px solid ${m.color}30">
+          <i data-lucide="${m.icon}" style="width:17px;height:17px;color:${m.color}"></i>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:6px;height:6px;border-radius:50%;background:${sc};flex-shrink:0${glow?';box-shadow:0 0 6px '+sc:''}"></div>
+          <span class="font-dm" style="font-size:.7rem;font-weight:500;color:rgba(255,255,255,.3)">${p.status}</span>
+        </div>
+      </div>
+      <h3 class="font-syne" style="font-weight:700;color:#fff;font-size:.95rem;margin-bottom:.5rem">${p.title}</h3>
+      <p class="font-dm" style="font-size:.8rem;line-height:1.65;margin-bottom:1rem;flex:1;color:rgba(255,255,255,.4)">${p.desc}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem">
+        ${p.tags.map(t=>`<span class="${m.tc} font-dm" style="font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:6px">${t}</span>`).join('')}
+      </div>
+      <a href="${p.link}" class="view-link font-dm" style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:${m.color};text-decoration:none">
+        View Project <i data-lucide="external-link" style="width:12px;height:12px"></i>
+      </a>`;
+    grid.appendChild(card);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>card.classList.add('visible')));
+  });
+  icons();
+}
+
+/* ── Filter pills ── */
+const PILL_CLS = { 'All':'pill-active-all','QA Testing':'pill-active-qa','GFX / Photoshop':'pill-active-gfx','Discord Bots':'pill-active-bot' };
+function filterProjects(cat){
+  document.querySelectorAll('#filter-bar button').forEach(btn=>{
+    const f = btn.dataset.f;
+    btn.className = 'pill font-dm';
+    btn.style.cssText = 'font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;display:inline-flex;align-items:center;gap:6px;';
+    if(f===cat){
+      btn.classList.add(PILL_CLS[f]);
+      btn.style.cssText += 'border:1px solid transparent;';
+    } else {
+      btn.style.cssText += 'border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);cursor:pointer;';
+    }
+  });
+  renderProjects(cat);
+}
+
+/* ── Render skills ── */
+function renderSkills(){
+  const grid = document.getElementById('skill-grid');
+  DATA.skills.forEach((s,i)=>{
+    const card = document.createElement('div');
+    card.className = 'glass fade-up';
+    card.style.cssText = 'border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;transition-delay:'+(i*.08)+'s';
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${s.color}1a;border:1px solid ${s.color}30">
+          <i data-lucide="${s.icon}" style="width:17px;height:17px;color:${s.color}"></i>
+        </div>
+        <div>
+          <p class="font-syne" style="font-weight:700;color:#fff;font-size:.9rem">${s.label}</p>
+          <p class="font-dm" style="font-size:.75rem;font-family:monospace;color:${s.color}">${s.pct}%</p>
+        </div>
+      </div>
+      <div style="height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden">
+        <div class="skill-fill" data-pct="${s.pct}" style="background:linear-gradient(90deg,${s.color},${s.color}66)"></div>
+      </div>
+      <p class="font-dm" style="font-size:.75rem;line-height:1.6;color:rgba(255,255,255,.35)">${s.desc}</p>`;
+    grid.appendChild(card);
+  });
+  icons();
+}
+
+/* ── Render stats ── */
+function renderStats(){
+  const el = document.getElementById('stat-strip');
+  DATA.stats.forEach(s=>{
+    const d = document.createElement('div');
+    d.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center';
+    d.innerHTML = `
+      <span class="font-syne grad-cyan" style="font-weight:900;font-size:clamp(1.8rem,4vw,2.5rem)">${s.n}</span>
+      <span class="font-dm" style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3)">${s.label}</span>`;
+    el.appendChild(d);
+  });
+}
+
+/* ── Render socials ── */
+function renderSocials(){
+  const items = [
+    { href:DATA.socials.github,  icon:'github',         label:'GitHub'  },
+    { href:DATA.socials.discord, icon:'message-square', label:'Discord' },
+    { href:DATA.socials.website, icon:'globe',          label:'Site'    }
+  ];
+  const row = document.getElementById('social-row');
+  items.forEach(s=>{
+    const a = document.createElement('a');
+    a.href=s.href; a.target='_blank'; a.rel='noreferrer'; a.title=s.label;
+    a.className='social-btn';
+    a.innerHTML=`<i data-lucide="${s.icon}" style="width:16px;height:16px;color:rgba(255,255,255,.5)"></i>`;
+    row.appendChild(a);
+  });
+  icons();
+}
+
+/* ── Intersection observer: fade-up + skill bars ── */
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    e.target.classList.add('visible');
+    e.target.querySelectorAll('.skill-fill').forEach(b=>{ b.style.width=b.dataset.pct+'%'; });
+    obs.unobserve(e.target);
+  });
+},{ threshold:.1 });
+
+function observeAll(){ document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el)); }
+
+/* ── Boot ── */
+renderProjects('All');
+renderSkills();
+renderStats();
+renderSocials();
+icons();
+observeAll();
+</script>
+</body>
+</html>
