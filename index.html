@@ -142,47 +142,24 @@ body{background:#000;color:#fff;font-family:'DM Sans',sans-serif;overflow-x:hidd
      ╚══════════════════════════════════════════════════════════════╝ -->
 <script>
 const DATA = {
-
-  /* ── PROFILE ─────────────────────────────────────────────── */
   name:    "V. Vishnu",
   short:   "Vishnu",
+  title:   "Roblox QA Tester & Technical Creative",
   tagline: "Breaking games before players do.",
-  discord: "vishnu404",
-  status:  "Available",   /* "Available" → green badge  |  anything else → grey */
-
-  roles: ["QA Tester.", "Bug Hunter.", "GFX Artist.", "Bot Developer.", "Tech Creative."],
-
+  discord: "vishnu.rblx",
+  roles:   ["QA Tester.", "Bug Hunter.", "GFX Artist.", "Bot Developer.", "Tech Creative."],
   socials: {
     github:   "https://github.com/",
     discord:  "https://discord.com/",
     website:  "#"
   },
-
-  /* ── STATS STRIP ─────────────────────────────────────────── */
   stats: [
     { n:"200+", label:"Bugs Logged"      },
     { n:"15+",  label:"Games Tested"     },
     { n:"9+",   label:"Projects Shipped" },
     { n:"3+",   label:"Bots Deployed"    }
   ],
-
-  /* ── PROJECTS ────────────────────────────────────────────── */
-  /*
-     ▸ ADD NEW PROJECTS AT THE TOP of this list.
-     ▸ The first item in this array = shown first on the site.
-     ▸ Fields:
-         id        — unique number (just increment)
-         cat       — "QA Testing" | "GFX / Photoshop" | "Discord Bots"
-         title     — card heading
-         thumbnail — image URL, or "" for icon placeholder
-         desc      — one or two sentences
-         tags      — array of short label strings
-         status    — "Completed" | "Ongoing" | "Deployed"
-         link      — "View Project" button URL
-  */
   projects: [
-
-    /* ↓↓↓  PASTE NEW PROJECTS HERE (at the top)  ↓↓↓ */
     {
       id: 13,
       cat:       "QA Testing",
@@ -313,68 +290,16 @@ const DATA = {
       status:    "Completed",
       link:      "https://www.roblox.com/games/88154180827048/Paper-Plane-Race"
     }
-
   ],
-    /* ↑↑↑  END OF PROJECTS LIST — no comma after the last }  ↑↑↑ */
-
-  ],  /* ← closing bracket for projects array */
-
-  /* ── SKILL MATRIX ────────────────────────────────────────── */
-  /*
-     icon: any name from https://lucide.dev/icons
-     pct:  0–100 (animates the progress bar)
-     color: accent hex colour for this card
-  */
   skills: [
-    {
-      label: "Roblox Studio",
-      icon:  "gamepad-2",
-      pct:   70,
-      color: "#00d4ff",
-      desc:  "Scripting, place-file testing & environment audits."
-    },
-    {
-      label: "Photoshop / GFX",
-      icon:  "palette",
-      pct:   88,
-      color: "#4f8eff",
-      desc:  "Cinematic thumbnails, full branding kits & promo art."
-    },
-    {
-      label: "Bot Scripting",
-      icon:  "code-2",
-      pct:   82,
-      color: "#7c5cff",
-      desc:  "Discord.js bots with Roblox API integrations & dashboards."
-    },
-    {
-      label: "Bug Documentation",
-      icon:  "target",
-      pct:   97,
-      color: "#00d4ff",
-      desc:  "Structured reports with repro steps, severity tags & video."
-    },
-    {
-      label: "Exploit Testing",
-      icon:  "shield",
-      pct:   90,
-      color: "#4f8eff",
-      desc:  "Identifying & cataloguing exploits before public launch."
-    },
-    {
-      label: "UI / UX Critique",
-      icon:  "layers",
-      pct:   85,
-      color: "#7c5cff",
-      desc:  "Player-perspective UX feedback & accessibility reviews."
-    }
-
-    /* ↑↑↑  END OF SKILLS — no comma after the last }  ↑↑↑ */
-
-  ]  /* ← closing bracket for skills array */
-
-}; /* ═══════════════ END OF DATA OBJECT ═══════════════ */
-   /* ════ DO NOT EDIT ANYTHING BELOW THIS LINE ════════ */
+    { label:"Roblox Studio",     pct:95, color:"#00d4ff", icon:"gamepad-2", desc:"QA, scripting, place-file testing & environment audits."       },
+    { label:"Photoshop / GFX",   pct:88, color:"#4f8eff", icon:"palette",   desc:"Cinematic thumbnails, full branding kits & promo art."          },
+    { label:"Bot Scripting",     pct:82, color:"#7c5cff", icon:"code-2",    desc:"Discord.js bots with Roblox API integrations & dashboards."     },
+    { label:"Bug Documentation", pct:97, color:"#00ffb3", icon:"target",    desc:"Structured reports with repro steps, severity tags & video."    },
+    { label:"Exploit Testing",   pct:90, color:"#ff6b6b", icon:"shield",    desc:"Identifying & cataloguing exploits before public launch."       },
+    { label:"UI / UX Critique",  pct:85, color:"#ffcc00", icon:"layers",    desc:"Player-perspective UX feedback & accessibility reviews."        }
+  ]
+}; 
 </script>
 
 <!-- ══════════════ NAVBAR ══════════════ -->
