@@ -111,71 +111,17 @@ const DATA = {
     { n:"9+",   label:"Projects Shipped" },
     { n:"3+",   label:"Bots Deployed"    }
   ],
-  projects: [
+projects: [
     {
       id:1, cat:"QA Testing",
-      title:"Blox Royale – Full QA Cycle",
-      desc:"End-to-end quality assurance for a battle-royale title. Logged 200+ bugs across physics, mechanics, and exploit vectors.",
-      tags:["Bug Tracking","Regression","Exploit Testing"],
-      status:"Completed", link:"#"
+      title:"Paper Plane Race",
+      image: "https://media.discordapp.net/attachments/1494377023752372357/1495313466242764830/Screenshot_4.png?ex=69e5caaf&is=69e4792f&hm=6e87b063418f65bf3ed07d2cf1c7e92111e209c26471d2b0066cb79593b91234&=&format=webp&quality=lossless", // Add this line
+      desc: "Made a thorough QA and Testing for PPR and gave my valuable suggestions and feeddbacks",
+      tags:["Bug Reports","Suggestions","Feedbacks"],
+      status:"Completed", link:"https://www.roblox.com/games/88154180827048/Paper-Plane-Race"
     },
-    {
-      id:2, cat:"QA Testing",
-      title:"RpgVerse – Combat System Audit",
-      desc:"Deep-dive into hitbox accuracy, ability cooldowns, and edge-case crashes across 14 distinct combat classes.",
-      tags:["Hitbox QA","Performance","Edge Cases"],
-      status:"Completed", link:"#"
-    },
-    {
-      id:3, cat:"QA Testing",
-      title:"Simulator X – Economy Balance",
-      desc:"Economy simulation testing to prevent inflation exploits, item duplication glitches, and unfair progression loops.",
-      tags:["Economy","Anti-Cheat","Balancing"],
-      status:"Ongoing", link:"#"
-    },
-    {
-      id:4, cat:"GFX / Photoshop",
-      title:"NeonRift – Thumbnail Series",
-      desc:"Cinematic GFX thumbnails using Blender renders + Photoshop post-processing. Achieved an 18% higher click-through rate.",
-      tags:["Photoshop","Blender","Thumbnails"],
-      status:"Completed", link:"#"
-    },
-    {
-      id:5, cat:"GFX / Photoshop",
-      title:"ShadowCraft Studios – Full Branding",
-      desc:"Complete group identity: logo, banner, icon set, and UI mockups for a mid-size Roblox development studio.",
-      tags:["Branding","Logo Design","UI Mockups"],
-      status:"Completed", link:"#"
-    },
-    {
-      id:6, cat:"GFX / Photoshop",
-      title:"Seasonal Event Poster Pack 2024",
-      desc:"Six promotional event posters with layered particle effects, glowing type, and seasonal colour grading.",
-      tags:["Posters","Typography","VFX"],
-      status:"Completed", link:"#"
-    },
-    {
-      id:7, cat:"Discord Bots",
-      title:"VerifyBot – Roblox Link System",
-      desc:"Full OAuth2 Roblox verification bot with automatic role assignment, rank syncing, and group wall monitoring.",
-      tags:["OAuth2","Role Sync","Node.js"],
-      status:"Deployed", link:"#"
-    },
-    {
-      id:8, cat:"Discord Bots",
-      title:"TicketSage – Support Automation",
-      desc:"Intelligent support-ticket bot with HTML transcript logging, priority queuing, and staff performance dashboards.",
-      tags:["Automation","Logging","Dashboard"],
-      status:"Deployed", link:"#"
-    },
-    {
-      id:9, cat:"Discord Bots",
-      title:"AuditGuard – Moderation Suite",
-      desc:"Advanced moderation bot with AI-assisted content filtering, full audit logs, and a persistent infraction tracker.",
-      tags:["Moderation","AI Filter","Logging"],
-      status:"Deployed", link:"#"
-    }
-  ],
+    // ... repeat for other projects
+  ]
   skills: [
     { label:"Roblox Studio",     pct:95, color:"#00d4ff", icon:"gamepad-2", desc:"QA, scripting, place-file testing & environment audits."       },
     { label:"Photoshop / GFX",   pct:88, color:"#4f8eff", icon:"palette",   desc:"Cinematic thumbnails, full branding kits & promo art."          },
@@ -416,10 +362,11 @@ function renderProjects(filter){
     card.dataset.cat = p.cat;
     card.style.cssText = 'border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;transition-delay:'+(i*.07)+'s';
     card.innerHTML = `
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem">
-        <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${m.color}1a;border:1px solid ${m.color}30">
-          <i data-lucide="${m.icon}" style="width:17px;height:17px;color:${m.color}"></i>
-        </div>
+      <div style="margin-bottom:1rem; border-radius:12px; overflow:hidden; height:160px;">
+        <img src="${p.image}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        ```
         <div style="display:flex;align-items:center;gap:6px">
           <div style="width:6px;height:6px;border-radius:50%;background:${sc};flex-shrink:0${glow?';box-shadow:0 0 6px '+sc:''}"></div>
           <span class="font-dm" style="font-size:.7rem;font-weight:500;color:rgba(255,255,255,.3)">${p.status}</span>
