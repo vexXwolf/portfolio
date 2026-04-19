@@ -9,132 +9,294 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script>
-  tailwind.config = {
-    theme:{ extend:{ fontFamily:{ syne:['Syne','sans-serif'], dm:['DM Sans','sans-serif'] } } }
-  }
-</script>
+<script>tailwind.config={theme:{extend:{fontFamily:{syne:['Syne','sans-serif'],dm:['DM Sans','sans-serif']}}}}</script>
+
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{background:#000;color:#fff;font-family:'DM Sans',sans-serif;overflow-x:hidden}
-  ::selection{background:rgba(0,212,255,.22);color:#00d4ff}
-  ::-webkit-scrollbar{width:4px}
-  ::-webkit-scrollbar-track{background:#000}
-  ::-webkit-scrollbar-thumb{background:rgba(0,212,255,.3);border-radius:99px}
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#000;color:#fff;font-family:'DM Sans',sans-serif;overflow-x:hidden}
+::selection{background:rgba(0,212,255,.22);color:#00d4ff}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,.3);border-radius:99px}
 
-  .grad-cyan{background:linear-gradient(135deg,#00d4ff,#4f8eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-  .grad-white{background:linear-gradient(135deg,#fff 45%,rgba(255,255,255,.3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-  .glass{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-  .grid-bg{background-image:linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);background-size:60px 60px}
+/* ── Utilities ── */
+.grad-cyan{background:linear-gradient(135deg,#00d4ff,#4f8eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-white{background:linear-gradient(135deg,#fff 45%,rgba(255,255,255,.3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.glass{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.grid-bg{background-image:linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);background-size:60px 60px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.35),transparent)}
 
-  .hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:min(700px,130vw);height:min(700px,130vw);background:radial-gradient(circle,rgba(0,212,255,.14) 0%,rgba(79,142,255,.07) 38%,transparent 68%);border-radius:50%;filter:blur(30px);pointer-events:none}
+/* ── Hero orb ── */
+.hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:min(700px,130vw);height:min(700px,130vw);background:radial-gradient(circle,rgba(0,212,255,.14) 0%,rgba(79,142,255,.07) 38%,transparent 68%);border-radius:50%;filter:blur(30px);pointer-events:none}
 
-  #navbar.scrolled{background:rgba(0,0,0,.75)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;border-bottom:1px solid rgba(0,212,255,.1)!important}
+/* ── Navbar ── */
+#navbar{transition:background .35s,border-bottom .35s}
+#navbar.scrolled{background:rgba(0,0,0,.78)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;border-bottom:1px solid rgba(0,212,255,.12)!important}
 
-  .proj-card{transition:box-shadow .3s,border-color .3s,transform .25s}
-  .proj-card:hover{transform:translateY(-4px)}
-  .proj-card[data-cat="QA Testing"]:hover{box-shadow:0 0 32px rgba(0,212,255,.15),0 0 70px rgba(0,212,255,.06);border-color:rgba(0,212,255,.38)!important}
-  .proj-card[data-cat="GFX / Photoshop"]:hover{box-shadow:0 0 32px rgba(79,142,255,.15),0 0 70px rgba(79,142,255,.06);border-color:rgba(79,142,255,.38)!important}
-  .proj-card[data-cat="Discord Bots"]:hover{box-shadow:0 0 32px rgba(124,92,255,.15),0 0 70px rgba(124,92,255,.06);border-color:rgba(124,92,255,.38)!important}
+/* ── Buttons ── */
+.btn-grad{background:linear-gradient(90deg,#00d4ff,#4f8eff);transition:opacity .2s,transform .15s}
+.btn-grad:hover{opacity:.88;transform:scale(1.04)}
+.btn-grad:active{transform:scale(.97)}
+.btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);transition:background .2s,border-color .2s,transform .15s}
+.btn-outline:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.28);transform:scale(1.04)}
 
-  .skill-fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
+/* ── Animations ── */
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .75s cubic-bezier(.22,1,.36,1)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.06s}.d2{transition-delay:.13s}.d3{transition-delay:.20s}
+.d4{transition-delay:.27s}.d5{transition-delay:.34s}.d6{transition-delay:.41s}
+.d7{transition-delay:.48s}.d8{transition-delay:.55s}.d9{transition-delay:.62s}
 
-  .cursor{display:inline-block;width:2px;height:1em;background:#00d4ff;vertical-align:middle;margin-left:3px;animation:blink 1s step-end infinite}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.bounce{animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-  .live-dot{width:8px;height:8px;border-radius:50%;background:#00ffb3;box-shadow:0 0 8px #00ffb3;animation:livepulse 1.8s ease-in-out infinite;flex-shrink:0}
-  @keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.4)}}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#00ffb3;box-shadow:0 0 8px #00ffb3;animation:livepulse 1.8s ease-in-out infinite;flex-shrink:0}
+@keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.45)}}
 
-  .fade-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .75s cubic-bezier(.22,1,.36,1)}
-  .fade-up.visible{opacity:1;transform:translateY(0)}
-  .d1{transition-delay:.06s}.d2{transition-delay:.13s}.d3{transition-delay:.20s}
-  .d4{transition-delay:.27s}.d5{transition-delay:.34s}.d6{transition-delay:.41s}
-  .d7{transition-delay:.48s}.d8{transition-delay:.55s}.d9{transition-delay:.62s}
+.cursor{display:inline-block;width:2px;height:1em;background:#00d4ff;vertical-align:middle;margin-left:3px;animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.35),transparent)}
+/* ── Project cards ── */
+.proj-card{transition:box-shadow .3s,border-color .3s,transform .25s;cursor:default}
+.proj-card:hover{transform:translateY(-4px)}
+.proj-card[data-cat="QA Testing"]:hover{box-shadow:0 0 32px rgba(0,212,255,.18),0 0 70px rgba(0,212,255,.07);border-color:rgba(0,212,255,.4)!important}
+.proj-card[data-cat="GFX / Photoshop"]:hover{box-shadow:0 0 32px rgba(79,142,255,.18),0 0 70px rgba(79,142,255,.07);border-color:rgba(79,142,255,.4)!important}
+.proj-card[data-cat="Discord Bots"]:hover{box-shadow:0 0 32px rgba(124,92,255,.18),0 0 70px rgba(124,92,255,.07);border-color:rgba(124,92,255,.4)!important}
 
-  .btn-grad{background:linear-gradient(90deg,#00d4ff,#4f8eff);transition:opacity .2s,transform .15s}
-  .btn-grad:hover{opacity:.88;transform:scale(1.04)}
-  .btn-grad:active{transform:scale(.97)}
-  .btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);transition:background .2s,border-color .2s,transform .15s}
-  .btn-outline:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.28);transform:scale(1.04)}
+/* ── Card thumbnail ── */
+.card-thumb{width:100%;height:160px;border-radius:10px;overflow:hidden;margin-bottom:1rem;position:relative;flex-shrink:0}
+.card-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+.proj-card:hover .card-thumb img{transform:scale(1.05)}
+.card-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 
-  .bounce{animation:bounce 2s ease-in-out infinite}
-  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+/* ── Skill bars ── */
+.skill-fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
 
-  .pill-active-all{background:linear-gradient(90deg,#00d4ff,#4f8eff)!important;color:#000!important;border-color:transparent!important}
-  .pill-active-qa{background:linear-gradient(90deg,#00d4ff,#00aacc)!important;color:#000!important;border-color:transparent!important}
-  .pill-active-gfx{background:linear-gradient(90deg,#4f8eff,#2255cc)!important;color:#000!important;border-color:transparent!important}
-  .pill-active-bot{background:linear-gradient(90deg,#7c5cff,#4422cc)!important;color:#000!important;border-color:transparent!important}
+/* ── Filter pills ── */
+.pill{cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s}
+.pill:not([class*="pill-active"]):hover{border-color:rgba(255,255,255,.28)!important;color:#fff!important;transform:scale(1.04)}
+.pill-active-all {background:linear-gradient(90deg,#00d4ff,#4f8eff)!important;color:#000!important;border-color:transparent!important}
+.pill-active-qa  {background:linear-gradient(90deg,#00d4ff,#00aac8)!important;color:#000!important;border-color:transparent!important}
+.pill-active-gfx {background:linear-gradient(90deg,#4f8eff,#2255cc)!important;color:#000!important;border-color:transparent!important}
+.pill-active-bot {background:linear-gradient(90deg,#7c5cff,#4422cc)!important;color:#000!important;border-color:transparent!important}
 
-  .pill{cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s}
-  .pill:not([class*="pill-active"]):hover{border-color:rgba(255,255,255,.25)!important;color:#fff!important;transform:scale(1.04)}
+/* ── Tags ── */
+.tag-qa {background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.22)}
+.tag-gfx{background:rgba(79,142,255,.1);color:#7aaaff;border:1px solid rgba(79,142,255,.22)}
+.tag-bot{background:rgba(124,92,255,.1);color:#b09cff;border:1px solid rgba(124,92,255,.22)}
 
-  #mobile-menu{display:none}
-  #mobile-menu.open{display:flex}
+/* ── Stat strip ── */
+.stat-strip{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.1)}
 
-  .tag-qa{background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.22)}
-  .tag-gfx{background:rgba(79,142,255,.1);color:#7aaaff;border:1px solid rgba(79,142,255,.22)}
-  .tag-bot{background:rgba(124,92,255,.1);color:#b09cff;border:1px solid rgba(124,92,255,.22)}
+/* ── Socials ── */
+.social-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);transition:background .2s,border-color .2s,transform .2s;text-decoration:none}
+.social-btn:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.28);transform:scale(1.12)}
 
-  .stat-strip{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.1)}
+/* ── View link arrow ── */
+.view-link{transition:gap .2s}
+.proj-card:hover .view-link{gap:10px!important}
 
-  .social-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);transition:background .2s,border-color .2s,transform .2s;text-decoration:none}
-  .social-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);transform:scale(1.12)}
+/* ── Status badge pill ── */
+.status-badge{display:inline-flex;align-items:center;gap:5px}
 
-  .view-link{transition:gap .2s}
-  .proj-card:hover .view-link{gap:10px!important}
+/* ── Mobile menu ── */
+#mobile-menu{display:none}
+#mobile-menu.open{display:flex}
 </style>
 </head>
 <body>
 
-<!-- ╔══════════════════════════════════════════════╗
-     ║   CENTRALIZED DATA — edit only this block   ║
-     ╚══════════════════════════════════════════════╝ -->
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║          ★  GOD-MODE CONTROL PANEL  ★                      ║
+     ║  Edit ONLY this DATA object to update your entire site.     ║
+     ║  — Profile, Status, Skills, Projects — all in one place.   ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
 <script>
 const DATA = {
-  name:    "V. Vishnu",
-  short:   "Vishnu",
-  title:   "Roblox QA Tester & Technical Creative",
+
+  /* ── PROFILE ────────────────────────────────────────────────── */
+  name:    "V. Vishnu",          // Full name (used in footer copyright)
+  short:   "Vishnu",             // Display name in hero & navbar
   tagline: "Breaking games before players do.",
-  discord: "vishnu.rblx",
-  roles:   ["QA Tester.", "Bug Hunter.", "GFX Artist.", "Bot Developer.", "Tech Creative."],
+  discord: "vishnu.rblx",        // Shown on copy buttons
+  status:  "Available",          // "Available" = green badge | anything else = grey
+
+  /* Typewriter roles — add/remove strings freely */
+  roles: ["QA Tester.", "Bug Hunter.", "GFX Artist.", "Bot Developer.", "Tech Creative."],
+
+  /* Social links */
   socials: {
     github:   "https://github.com/",
     discord:  "https://discord.com/",
     website:  "#"
   },
+
+  /* ── STATS STRIP ────────────────────────────────────────────── */
   stats: [
     { n:"200+", label:"Bugs Logged"      },
     { n:"15+",  label:"Games Tested"     },
     { n:"9+",   label:"Projects Shipped" },
     { n:"3+",   label:"Bots Deployed"    }
   ],
-projects: [
+
+  /* ── PROJECTS ───────────────────────────────────────────────── */
+  /*
+    cat:       "QA Testing" | "GFX / Photoshop" | "Discord Bots"
+    status:    "Completed"  | "Ongoing"          | "Deployed"
+    thumbnail: URL string for a preview image, or "" for icon placeholder
+    link:      URL for the "View Project" button
+  */
+  projects: [
     {
-      id:1, cat:"QA Testing",
-      title:"Paper Plane Race",
-      image: "https://media.discordapp.net/attachments/1494377023752372357/1495313466242764830/Screenshot_4.png?ex=69e5caaf&is=69e4792f&hm=6e87b063418f65bf3ed07d2cf1c7e92111e209c26471d2b0066cb79593b91234&=&format=webp&quality=lossless", // Add this line
-      desc: "Made a thorough QA and Testing for PPR and gave my valuable suggestions and feeddbacks",
-      tags:["Bug Reports","Suggestions","Feedbacks"],
-      status:"Completed", link:"https://www.roblox.com/games/88154180827048/Paper-Plane-Race"
+      id: 1,
+      cat:       "QA Testing",
+      title:     "Paper Plane Race",
+      thumbnail: "https://media.discordapp.net/attachments/1494377023752372357/1495313466242764830/Screenshot_4.png?ex=69e5caaf&is=69e4792f&hm=6e87b063418f65bf3ed07d2cf1c7e92111e209c26471d2b0066cb79593b91234&=&format=webp&quality=lossless",
+      desc:      "Conducted a thorough QA pass for Paper Plane Race — documenting bugs, edge cases, and delivering structured suggestions and feedback to the dev team.",
+      tags:      ["Bug Reports", "Suggestions", "Feedback"],
+      status:    "Completed",
+      link:      "https://www.roblox.com/games/88154180827048/Paper-Plane-Race"
     },
-    // ... repeat for other projects
-  ]
+    {
+      id: 2,
+      cat:       "QA Testing",
+      title:     "RpgVerse – Combat System Audit",
+      thumbnail: "",
+      desc:      "Deep-dive into hitbox accuracy, ability cooldowns, and edge-case crashes across 14 distinct combat classes.",
+      tags:      ["Hitbox QA", "Performance", "Edge Cases"],
+      status:    "Completed",
+      link:      "#"
+    },
+    {
+      id: 3,
+      cat:       "QA Testing",
+      title:     "Simulator X – Economy Balance",
+      thumbnail: "",
+      desc:      "Economy simulation testing to prevent inflation exploits, item duplication glitches, and unfair progression loops.",
+      tags:      ["Economy", "Anti-Cheat", "Balancing"],
+      status:    "Ongoing",
+      link:      "#"
+    },
+    {
+      id: 4,
+      cat:       "GFX / Photoshop",
+      title:     "NeonRift – Thumbnail Series",
+      thumbnail: "",
+      desc:      "Cinematic GFX thumbnails using Blender renders + Photoshop post-processing. Achieved an 18% higher click-through rate.",
+      tags:      ["Photoshop", "Blender", "Thumbnails"],
+      status:    "Completed",
+      link:      "#"
+    },
+    {
+      id: 5,
+      cat:       "GFX / Photoshop",
+      title:     "ShadowCraft Studios – Full Branding",
+      thumbnail: "",
+      desc:      "Complete group identity: logo, banner, icon set, and UI mockups for a mid-size Roblox development studio.",
+      tags:      ["Branding", "Logo Design", "UI Mockups"],
+      status:    "Completed",
+      link:      "#"
+    },
+    {
+      id: 6,
+      cat:       "GFX / Photoshop",
+      title:     "Seasonal Event Poster Pack 2024",
+      thumbnail: "",
+      desc:      "Six promotional event posters with layered particle effects, glowing type, and seasonal colour grading.",
+      tags:      ["Posters", "Typography", "VFX"],
+      status:    "Completed",
+      link:      "#"
+    },
+    {
+      id: 7,
+      cat:       "Discord Bots",
+      title:     "VerifyBot – Roblox Link System",
+      thumbnail: "",
+      desc:      "Full OAuth2 Roblox verification bot with automatic role assignment, rank syncing, and group wall monitoring.",
+      tags:      ["OAuth2", "Role Sync", "Node.js"],
+      status:    "Deployed",
+      link:      "#"
+    },
+    {
+      id: 8,
+      cat:       "Discord Bots",
+      title:     "TicketSage – Support Automation",
+      thumbnail: "",
+      desc:      "Intelligent support-ticket bot with HTML transcript logging, priority queuing, and staff performance dashboards.",
+      tags:      ["Automation", "Logging", "Dashboard"],
+      status:    "Deployed",
+      link:      "#"
+    },
+    {
+      id: 9,
+      cat:       "Discord Bots",
+      title:     "AuditGuard – Moderation Suite",
+      thumbnail: "",
+      desc:      "Advanced moderation bot with AI-assisted content filtering, full audit logs, and a persistent infraction tracker.",
+      tags:      ["Moderation", "AI Filter", "Logging"],
+      status:    "Deployed",
+      link:      "#"
+    }
+  ],
+
+  /* ── SKILL MATRIX ───────────────────────────────────────────── */
+  /*
+    icon: any Lucide icon name  →  https://lucide.dev/icons
+    pct:  0–100  (drives the animated progress bar)
+    color: accent hex for this skill card
+  */
   skills: [
-    { label:"Roblox Studio",     pct:95, color:"#00d4ff", icon:"gamepad-2", desc:"QA, scripting, place-file testing & environment audits."       },
-    { label:"Photoshop / GFX",   pct:88, color:"#4f8eff", icon:"palette",   desc:"Cinematic thumbnails, full branding kits & promo art."          },
-    { label:"Bot Scripting",     pct:82, color:"#7c5cff", icon:"code-2",    desc:"Discord.js bots with Roblox API integrations & dashboards."     },
-    { label:"Bug Documentation", pct:97, color:"#00ffb3", icon:"target",    desc:"Structured reports with repro steps, severity tags & video."    },
-    { label:"Exploit Testing",   pct:90, color:"#ff6b6b", icon:"shield",    desc:"Identifying & cataloguing exploits before public launch."       },
-    { label:"UI / UX Critique",  pct:85, color:"#ffcc00", icon:"layers",    desc:"Player-perspective UX feedback & accessibility reviews."        }
+    {
+      label: "Roblox Studio",
+      icon:  "gamepad-2",
+      pct:   95,
+      color: "#00d4ff",
+      desc:  "QA, scripting, place-file testing & environment audits."
+    },
+    {
+      label: "Photoshop / GFX",
+      icon:  "palette",
+      pct:   88,
+      color: "#4f8eff",
+      desc:  "Cinematic thumbnails, full branding kits & promo art."
+    },
+    {
+      label: "Bot Scripting",
+      icon:  "code-2",
+      pct:   82,
+      color: "#7c5cff",
+      desc:  "Discord.js bots with Roblox API integrations & dashboards."
+    },
+    {
+      label: "Bug Documentation",
+      icon:  "target",
+      pct:   97,
+      color: "#00ffb3",
+      desc:  "Structured reports with repro steps, severity tags & video."
+    },
+    {
+      label: "Exploit Testing",
+      icon:  "shield",
+      pct:   90,
+      color: "#ff6b6b",
+      desc:  "Identifying & cataloguing exploits before public launch."
+    },
+    {
+      label: "UI / UX Critique",
+      icon:  "layers",
+      pct:   85,
+      color: "#ffcc00",
+      desc:  "Player-perspective UX feedback & accessibility reviews."
+    }
   ]
-};
+
+}; /* ← END OF DATA — do not edit below this line unless you know JS */
 </script>
 
 <!-- ══════════════ NAVBAR ══════════════ -->
-<nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;transition:background .35s,border-bottom .35s">
+<nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem">
 
   <a href="#hero" style="display:flex;align-items:center;gap:8px;text-decoration:none">
     <div class="btn-grad" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -150,13 +312,13 @@ projects: [
   </div>
 
   <div style="display:flex;align-items:center;gap:8px">
-    <button id="nav-copy-btn" onclick="copyDiscord('nav')"
-      class="btn-grad" style="display:flex;align-items:center;gap:8px;padding:.5rem 1rem;border-radius:99px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;color:#000;cursor:pointer;border:none">
+    <button id="nav-copy-btn" onclick="copyDiscord('nav')" class="btn-grad"
+      style="display:flex;align-items:center;gap:7px;padding:.45rem .9rem;border-radius:99px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;color:#000;cursor:pointer;border:none">
       <i data-lucide="copy" id="nav-icon" style="width:13px;height:13px;flex-shrink:0"></i>
       <span id="nav-label" class="hidden md:inline"></span>
     </button>
-    <button onclick="toggleMenu()" id="hamburger"
-      class="glass md:hidden" style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:rgba(255,255,255,.05)">
+    <button onclick="toggleMenu()" id="hamburger" class="glass md:hidden"
+      style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:rgba(255,255,255,.05)">
       <i data-lucide="menu" style="width:16px;height:16px;color:#fff"></i>
     </button>
   </div>
@@ -164,22 +326,18 @@ projects: [
 
 <!-- Mobile menu -->
 <div id="mobile-menu" class="glass" style="position:fixed;top:68px;left:1rem;right:1rem;z-index:40;border-radius:1rem;padding:1rem;flex-direction:column;gap:.5rem">
-  <a href="#projects" onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">Projects</a>
-  <a href="#skills"   onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">Skills</a>
-  <a href="#contact"  onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background='transparent'">Contact</a>
+  <a href="#projects" onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='transparent'">Projects</a>
+  <a href="#skills"   onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='transparent'">Skills</a>
+  <a href="#contact"  onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='transparent'">Contact</a>
 </div>
 
 <!-- ══════════════ HERO ══════════════ -->
 <section id="hero" class="grid-bg" style="position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:0 1.5rem">
   <div class="hero-orb"></div>
-
   <div style="position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:56rem;width:100%">
 
-    <!-- Live badge -->
-    <div class="fade-up visible" style="display:inline-flex;align-items:center;gap:8px;padding:.375rem 1rem;border-radius:99px;margin-bottom:2rem;background:rgba(0,255,179,.06);border:1px solid rgba(0,255,179,.22)">
-      <div class="live-dot"></div>
-      <span class="font-dm" style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00ffb3">Available for Work</span>
-    </div>
+    <!-- Live status badge (driven by DATA.status) -->
+    <div id="hero-badge" class="fade-up visible" style="display:inline-flex;align-items:center;gap:8px;padding:.375rem 1rem;border-radius:99px;margin-bottom:2rem"></div>
 
     <!-- Name -->
     <h1 id="hero-name" class="font-syne grad-white fade-up visible d1"
@@ -219,20 +377,19 @@ projects: [
 
   <!-- Filter pills -->
   <div id="filter-bar" class="fade-up d1" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem">
-    <button onclick="filterProjects('All')" data-f="All"
+    <button onclick="filterProjects('All')"            data-f="All"
       class="pill pill-active-all font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px">All</button>
-    <button onclick="filterProjects('QA Testing')" data-f="QA Testing"
+    <button onclick="filterProjects('QA Testing')"     data-f="QA Testing"
       class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
       <i data-lucide="gamepad-2" style="width:13px;height:13px"></i>QA Testing</button>
     <button onclick="filterProjects('GFX / Photoshop')" data-f="GFX / Photoshop"
       class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
       <i data-lucide="image" style="width:13px;height:13px"></i>GFX / Photoshop</button>
-    <button onclick="filterProjects('Discord Bots')" data-f="Discord Bots"
+    <button onclick="filterProjects('Discord Bots')"   data-f="Discord Bots"
       class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
       <i data-lucide="bot" style="width:13px;height:13px"></i>Discord Bots</button>
   </div>
 
-  <!-- Grid -->
   <div id="project-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:1.25rem"></div>
 </section>
 
@@ -251,25 +408,21 @@ projects: [
   </div>
 </section>
 
-<!-- ══════════════ FOOTER / CONTACT ══════════════ -->
+<!-- ══════════════ CONTACT / FOOTER ══════════════ -->
 <footer id="contact" style="padding:6rem 1.5rem;max-width:80rem;margin:0 auto">
-
   <div class="divider" style="margin-bottom:5rem"></div>
-
   <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:3rem">
 
-    <!-- Left -->
     <div class="fade-up">
       <p class="font-dm" style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#00d4ff;margin-bottom:.75rem">Let's Connect</p>
       <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em;line-height:1.1;margin-bottom:1.5rem">Got a project<br>in mind?</h2>
-      <button id="footer-copy-btn" onclick="copyDiscord('footer')"
-        class="btn-grad font-dm" style="display:inline-flex;align-items:center;gap:10px;padding:.875rem 1.5rem;border-radius:99px;font-weight:700;color:#000;font-size:.875rem;cursor:pointer;border:none">
+      <button id="footer-copy-btn" onclick="copyDiscord('footer')" class="btn-grad font-dm"
+        style="display:inline-flex;align-items:center;gap:10px;padding:.875rem 1.5rem;border-radius:99px;font-weight:700;color:#000;font-size:.875rem;cursor:pointer;border:none">
         <i data-lucide="copy" id="footer-icon" style="width:15px;height:15px;flex-shrink:0"></i>
         <span id="footer-label"></span>
       </button>
     </div>
 
-    <!-- Right -->
     <div class="fade-up d2" style="display:flex;flex-direction:column;align-items:flex-start;gap:1rem">
       <div id="social-row" style="display:flex;gap:.75rem"></div>
       <p id="footer-cr" class="font-dm" style="font-size:.75rem;color:rgba(255,255,255,.2)"></p>
@@ -277,28 +430,42 @@ projects: [
   </div>
 </footer>
 
-<!-- ══════════════ MAIN SCRIPT ══════════════ -->
+<!-- ══════════════════════════════════════════════
+     ENGINE — do not edit below this line
+══════════════════════════════════════════════ -->
 <script>
-/* ── Static text ── */
-document.getElementById('nav-name').textContent    = DATA.short;
-document.getElementById('nav-label').textContent   = DATA.discord;
-document.getElementById('hero-name').textContent   = DATA.short;
-document.getElementById('hero-tagline').textContent= DATA.tagline;
-document.getElementById('footer-label').textContent= 'Copy Discord — ' + DATA.discord;
-document.getElementById('footer-cr').textContent   = '© ' + new Date().getFullYear() + ' ' + DATA.name + ' — All rights reserved.';
-
 /* ── Icon init ── */
 function icons(){ if(window.lucide) lucide.createIcons(); }
 
+/* ── Populate static text from DATA ── */
+document.getElementById('nav-name').textContent     = DATA.short;
+document.getElementById('nav-label').textContent    = DATA.discord;
+document.getElementById('hero-name').textContent    = DATA.short;
+document.getElementById('hero-tagline').textContent = DATA.tagline;
+document.getElementById('footer-label').textContent = 'Copy Discord — ' + DATA.discord;
+document.getElementById('footer-cr').textContent    = '© ' + new Date().getFullYear() + ' ' + DATA.name + ' — All rights reserved.';
+
+/* ── Dynamic status badge ── */
+(function(){
+  const badge = document.getElementById('hero-badge');
+  const isAvailable = DATA.status === 'Available';
+  badge.style.background = isAvailable ? 'rgba(0,255,179,.06)' : 'rgba(255,255,255,.05)';
+  badge.style.border      = isAvailable ? '1px solid rgba(0,255,179,.22)' : '1px solid rgba(255,255,255,.1)';
+  const dotColor  = isAvailable ? '#00ffb3' : '#888';
+  const textColor = isAvailable ? '#00ffb3' : 'rgba(255,255,255,.4)';
+  const label     = isAvailable ? 'Available for Work' : DATA.status;
+  badge.innerHTML = `
+    <div style="width:8px;height:8px;border-radius:50%;background:${dotColor};flex-shrink:0;${isAvailable?'box-shadow:0 0 8px '+dotColor+';animation:livepulse 1.8s ease-in-out infinite':''}"></div>
+    <span class="font-dm" style="font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:${textColor}">${label}</span>`;
+})();
+
 /* ── Navbar scroll ── */
-window.addEventListener('scroll',()=>{
+window.addEventListener('scroll', ()=>{
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
 });
 
 /* ── Mobile menu ── */
-function toggleMenu(){
-  document.getElementById('mobile-menu').classList.toggle('open');
-}
+function toggleMenu(){ document.getElementById('mobile-menu').classList.toggle('open'); }
 document.addEventListener('click', e=>{
   const m = document.getElementById('mobile-menu');
   const h = document.getElementById('hamburger');
@@ -311,32 +478,29 @@ document.addEventListener('click', e=>{
   let wi=0, ci=0, del=false;
   function tick(){
     const w = DATA.roles[wi];
-    el.textContent = w.slice(0,ci);
-    if(!del){ ci++; if(ci>w.length){del=true;setTimeout(tick,2000);return;} }
-    else     { ci--; if(ci<0){ci=0;del=false;wi=(wi+1)%DATA.roles.length;setTimeout(tick,350);return;} }
-    setTimeout(tick, del?45:85);
+    el.textContent = w.slice(0, ci);
+    if(!del){ ci++; if(ci > w.length){ del=true; setTimeout(tick,2000); return; } }
+    else    { ci--; if(ci < 0){ ci=0; del=false; wi=(wi+1)%DATA.roles.length; setTimeout(tick,350); return; } }
+    setTimeout(tick, del ? 45 : 85);
   }
   tick();
 })();
 
-/* ── Discord copy ── */
-const COPY_ORIG = { nav:'nav', footer:'footer' };
+/* ── Discord copy (works for both navbar and footer) ── */
 function copyDiscord(prefix){
   navigator.clipboard.writeText(DATA.discord).catch(()=>{});
-
-  const btn  = document.getElementById(prefix+'-copy-btn') || document.getElementById(prefix+'_copy_btn') || (prefix==='footer' ? document.getElementById('footer-copy-btn') : document.getElementById('nav-copy-btn'));
-  const iconEl = document.getElementById(prefix+'-icon') || document.getElementById(prefix+'_icon');
-  const lblEl  = document.getElementById(prefix+'-label') || document.getElementById(prefix+'_label');
-
-  // Swap to green
-  if(btn) btn.style.background='#00ffb3';
-  if(lblEl) { lblEl._orig = lblEl.textContent; lblEl.textContent='Copied!'; }
-  if(iconEl){ iconEl.setAttribute('data-lucide','check'); icons(); }
-
+  const btn   = document.getElementById(prefix === 'nav' ? 'nav-copy-btn'  : 'footer-copy-btn');
+  const iconEl= document.getElementById(prefix === 'nav' ? 'nav-icon'      : 'footer-icon');
+  const lblEl = document.getElementById(prefix === 'nav' ? 'nav-label'     : 'footer-label');
+  const origBg    = btn.style.background;
+  const origLabel = lblEl ? lblEl.textContent : '';
+  btn.style.background = '#00ffb3';
+  if(lblEl)  { lblEl.textContent = 'Copied!'; }
+  if(iconEl) { iconEl.setAttribute('data-lucide','check'); icons(); }
   setTimeout(()=>{
-    if(btn) btn.style.background='';
-    if(lblEl && lblEl._orig) lblEl.textContent = lblEl._orig;
-    if(iconEl){ iconEl.setAttribute('data-lucide','copy'); icons(); }
+    btn.style.background = '';
+    if(lblEl)  lblEl.textContent = origLabel;
+    if(iconEl) { iconEl.setAttribute('data-lucide','copy'); icons(); }
   }, 2200);
 }
 
@@ -346,29 +510,52 @@ const CAT_META = {
   'GFX / Photoshop': { icon:'image',     color:'#4f8eff', tc:'tag-gfx' },
   'Discord Bots':    { icon:'bot',       color:'#7c5cff', tc:'tag-bot' }
 };
-const STATUS_CLR = { Completed:'rgba(255,255,255,.25)', Ongoing:'#00ffb3', Deployed:'#00ffb3' };
+const STATUS_CLR = { Completed:'rgba(255,255,255,.22)', Ongoing:'#00ffb3', Deployed:'#00ffb3' };
+
+/* ── Build thumbnail HTML ── */
+function buildThumb(p, m){
+  if(p.thumbnail){
+    return `<div class="card-thumb">
+      <img src="${p.thumbnail}" alt="${p.title}" loading="lazy"
+        onerror="this.parentElement.innerHTML=buildThumbFallback('${m.icon}','${m.color}')">
+    </div>`;
+  }
+  return `<div class="card-thumb">
+    <div class="card-thumb-placeholder" style="background:${m.color}0d;border:1px solid ${m.color}20;border-radius:10px">
+      <i data-lucide="${m.icon}" style="width:32px;height:32px;color:${m.color};opacity:.4"></i>
+    </div>
+  </div>`;
+}
+function buildThumbFallback(icon, color){
+  return `<div class="card-thumb-placeholder" style="background:${color}0d;border:1px solid ${color}20;border-radius:10px">
+    <i data-lucide="${icon}" style="width:32px;height:32px;color:${color};opacity:.4"></i>
+  </div>`;
+}
 
 /* ── Render projects ── */
 function renderProjects(filter){
   const grid = document.getElementById('project-grid');
   grid.innerHTML = '';
-  const list = filter==='All' ? DATA.projects : DATA.projects.filter(p=>p.cat===filter);
-  list.forEach((p,i)=>{
-    const m = CAT_META[p.cat]||{};
-    const sc = STATUS_CLR[p.status]||'rgba(255,255,255,.25)';
-    const glow = p.status!=='Completed';
+  const list = filter === 'All' ? DATA.projects : DATA.projects.filter(p => p.cat === filter);
+
+  list.forEach((p, i)=>{
+    const m   = CAT_META[p.cat] || { icon:'star', color:'#fff', tc:'tag-qa' };
+    const sc  = STATUS_CLR[p.status] || 'rgba(255,255,255,.22)';
+    const glow = p.status !== 'Completed';
+
     const card = document.createElement('div');
-    card.className = 'proj-card glass fade-up';
+    card.className   = 'proj-card glass fade-up';
     card.dataset.cat = p.cat;
-    card.style.cssText = 'border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;transition-delay:'+(i*.07)+'s';
+    card.style.cssText = `border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;transition-delay:${i*.07}s`;
+
     card.innerHTML = `
-      <div style="margin-bottom:1rem; border-radius:12px; overflow:hidden; height:160px;">
-        <img src="${p.image}" alt="${p.title}" style="width:100%; height:100%; object-fit:cover;">
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        ```
-        <div style="display:flex;align-items:center;gap:6px">
-          <div style="width:6px;height:6px;border-radius:50%;background:${sc};flex-shrink:0${glow?';box-shadow:0 0 6px '+sc:''}"></div>
+      ${buildThumb(p, m)}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+        <div style="width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${m.color}1a;border:1px solid ${m.color}28">
+          <i data-lucide="${m.icon}" style="width:16px;height:16px;color:${m.color}"></i>
+        </div>
+        <div class="status-badge">
+          <div style="width:6px;height:6px;border-radius:50%;background:${sc};flex-shrink:0${glow ? ';box-shadow:0 0 6px '+sc : ''}"></div>
           <span class="font-dm" style="font-size:.7rem;font-weight:500;color:rgba(255,255,255,.3)">${p.status}</span>
         </div>
       </div>
@@ -377,11 +564,13 @@ function renderProjects(filter){
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem">
         ${p.tags.map(t=>`<span class="${m.tc} font-dm" style="font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:6px">${t}</span>`).join('')}
       </div>
-      <a href="${p.link}" class="view-link font-dm" style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:${m.color};text-decoration:none">
+      <a href="${p.link}" target="_blank" rel="noreferrer" class="view-link font-dm"
+        style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:${m.color};text-decoration:none">
         View Project <i data-lucide="external-link" style="width:12px;height:12px"></i>
       </a>`;
+
     grid.appendChild(card);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>card.classList.add('visible')));
+    requestAnimationFrame(()=> requestAnimationFrame(()=> card.classList.add('visible')));
   });
   icons();
 }
@@ -392,24 +581,23 @@ function filterProjects(cat){
   document.querySelectorAll('#filter-bar button').forEach(btn=>{
     const f = btn.dataset.f;
     btn.className = 'pill font-dm';
-    btn.style.cssText = 'font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;display:inline-flex;align-items:center;gap:6px;';
-    if(f===cat){
+    if(f === cat){
       btn.classList.add(PILL_CLS[f]);
-      btn.style.cssText += 'border:1px solid transparent;';
+      btn.style.cssText = 'font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;cursor:pointer';
     } else {
-      btn.style.cssText += 'border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);cursor:pointer;';
+      btn.style.cssText = 'font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);cursor:pointer';
     }
   });
   renderProjects(cat);
 }
 
-/* ── Render skills ── */
+/* ── Render skill cards ── */
 function renderSkills(){
   const grid = document.getElementById('skill-grid');
-  DATA.skills.forEach((s,i)=>{
+  DATA.skills.forEach((s, i)=>{
     const card = document.createElement('div');
     card.className = 'glass fade-up';
-    card.style.cssText = 'border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;transition-delay:'+(i*.08)+'s';
+    card.style.cssText = `border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;transition-delay:${i*.08}s`;
     card.innerHTML = `
       <div style="display:flex;align-items:center;gap:.75rem">
         <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${s.color}1a;border:1px solid ${s.color}30">
@@ -417,7 +605,7 @@ function renderSkills(){
         </div>
         <div>
           <p class="font-syne" style="font-weight:700;color:#fff;font-size:.9rem">${s.label}</p>
-          <p class="font-dm" style="font-size:.75rem;font-family:monospace;color:${s.color}">${s.pct}%</p>
+          <p class="font-dm" style="font-size:.73rem;font-family:monospace;color:${s.color}">${s.pct}%</p>
         </div>
       </div>
       <div style="height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden">
@@ -429,7 +617,7 @@ function renderSkills(){
   icons();
 }
 
-/* ── Render stats ── */
+/* ── Render stats strip ── */
 function renderStats(){
   const el = document.getElementById('stat-strip');
   DATA.stats.forEach(s=>{
@@ -442,12 +630,12 @@ function renderStats(){
   });
 }
 
-/* ── Render socials ── */
+/* ── Render social icons ── */
 function renderSocials(){
   const items = [
-    { href:DATA.socials.github,  icon:'github',         label:'GitHub'  },
-    { href:DATA.socials.discord, icon:'message-square', label:'Discord' },
-    { href:DATA.socials.website, icon:'globe',          label:'Site'    }
+    { href: DATA.socials.github,   icon:'github',         label:'GitHub'  },
+    { href: DATA.socials.discord,  icon:'message-square', label:'Discord' },
+    { href: DATA.socials.website,  icon:'globe',          label:'Site'    }
   ];
   const row = document.getElementById('social-row');
   items.forEach(s=>{
@@ -460,19 +648,19 @@ function renderSocials(){
   icons();
 }
 
-/* ── Intersection observer: fade-up + skill bars ── */
+/* ── IntersectionObserver: fade-up + skill bars ── */
 const obs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(!e.isIntersecting) return;
     e.target.classList.add('visible');
-    e.target.querySelectorAll('.skill-fill').forEach(b=>{ b.style.width=b.dataset.pct+'%'; });
+    e.target.querySelectorAll('.skill-fill').forEach(b=>{ b.style.width = b.dataset.pct + '%'; });
     obs.unobserve(e.target);
   });
-},{ threshold:.1 });
+}, { threshold: 0.1 });
 
-function observeAll(){ document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el)); }
+function observeAll(){ document.querySelectorAll('.fade-up').forEach(el=> obs.observe(el)); }
 
-/* ── Boot ── */
+/* ── Boot sequence ── */
 renderProjects('All');
 renderSkills();
 renderStats();
