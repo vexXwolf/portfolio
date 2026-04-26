@@ -12,7 +12,7 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
 <style>
-/* ── Reset & Theme ── */
+/* ── Reset & Industrial Theme ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
@@ -21,25 +21,20 @@ body{
   font-family:'Inter',sans-serif;
   overflow-x:hidden;
 }
-::selection{background:rgba(249,115,22,.2);color:#f97316}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-track{background:#09090b}
-::-webkit-scrollbar-thumb{background:#27272a}
-
 .font-mono { font-family: 'JetBrains Mono', monospace; }
 
-/* ── Utilities ── */
-.glass-panel {
+/* ── Prevent Grey Spaces ── */
+.column-box {
   background: #121214;
   border: 1px solid #27272a;
-  transition: border-color 0.3s ease;
+  padding: 1.5rem;
 }
-.glass-panel:hover { border-color: #3f3f46; }
 
+/* ── Your Original Project Styling ── */
 .project-card {
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .project-card.visible {
   opacity: 1;
@@ -48,7 +43,7 @@ body{
 
 .filter-btn.active {
   background: #f97316;
-  color: #fff;
+  color: white;
   border-color: #f97316;
 }
 </style>
@@ -57,16 +52,13 @@ body{
 <body>
 
 <main class="min-h-screen">
-  <header class="max-w-6xl mx-auto px-6 pt-24 pb-12">
-    <div class="flex flex-col gap-2 mb-8">
-      <span class="font-mono text-orange-500 text-xs tracking-[0.3em] uppercase">Status: Available for Hire</span>
-      <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter text-white">RESPAWN<span class="text-orange-500">.</span></h1>
-      <p class="text-zinc-500 max-w-md text-sm font-medium leading-relaxed">
-        Lead QA Tester specializing in gameplay balance, technical bug reporting, and stress-testing for high-traffic experiences.
-      </p>
+  <header class="max-w-6xl mx-auto px-6 pt-20 pb-10">
+    <div class="mb-10">
+      <span class="font-mono text-orange-500 text-[10px] tracking-widest uppercase">QA Lead / Technical Tester</span>
+      <h1 class="text-7xl font-black tracking-tighter text-white mt-2">RESPAWN<span class="text-orange-500">.</span></h1>
     </div>
 
-    <div id="stats-row" class="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-zinc-800/50">
+    <div id="stats-row" class="grid grid-cols-2 md:grid-cols-4 gap-6 py-10 border-y border-zinc-800/50">
       </div>
   </header>
 
@@ -74,70 +66,65 @@ body{
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
       
       <div class="space-y-4">
-        <h3 class="font-mono text-[10px] tracking-widest uppercase text-zinc-500">_Expertise</h3>
-        <div class="glass-panel p-6 space-y-3">
+        <h3 class="font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-500">_Expertise</h3>
+        <div class="column-box">
           <ul class="space-y-3 text-sm text-zinc-400 font-mono">
-            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> Regression Testing</li>
-            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> Bug Documentation</li>
-            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> Stress Testing</li>
-            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> API Validation</li>
+            <li><span class="text-orange-500 mr-2">→</span>Regression Testing</li>
+            <li><span class="text-orange-500 mr-2">→</span>Bug Documentation</li>
+            <li><span class="text-orange-500 mr-2">→</span>Stress Testing</li>
+            <li><span class="text-orange-500 mr-2">→</span>API Validation</li>
           </ul>
         </div>
       </div>
 
       <div class="space-y-4">
-        <h3 class="font-mono text-[10px] tracking-widest uppercase text-zinc-500">_Evidence</h3>
-        <div class="glass-panel p-6">
-          <div class="space-y-2">
-            <a href="#" target="_blank" class="flex items-center justify-between group p-3 bg-zinc-900/50 border border-zinc-800 hover:border-orange-500 transition-all">
-              <span class="text-[10px] font-mono uppercase tracking-tight">Full Audit: Fast Food Sim</span>
-              <i data-lucide="arrow-up-right" class="w-3 h-3 text-zinc-600 group-hover:text-orange-500"></i>
-            </a>
-            <a href="#" target="_blank" class="flex items-center justify-between group p-3 bg-zinc-900/50 border border-zinc-800 hover:border-orange-500 transition-all">
-              <span class="text-[10px] font-mono uppercase tracking-tight">Standard Bug Template</span>
-              <i data-lucide="arrow-up-right" class="w-3 h-3 text-zinc-600 group-hover:text-orange-500"></i>
-            </a>
-          </div>
+        <h3 class="font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-500">_Report_Evidence</h3>
+        <div class="column-box space-y-3">
+          <a href="#" target="_blank" class="flex items-center justify-between group p-2 border border-zinc-800 hover:border-orange-500 transition-all bg-zinc-900/30">
+            <span class="text-[10px] font-mono uppercase tracking-tight">Full Audit: Fast Food Sim</span>
+            <i data-lucide="external-link" class="w-3 h-3 text-zinc-600 group-hover:text-orange-500"></i>
+          </a>
+          <a href="#" target="_blank" class="flex items-center justify-between group p-2 border border-zinc-800 hover:border-orange-500 transition-all bg-zinc-900/30">
+            <span class="text-[10px] font-mono uppercase tracking-tight">Bug Report Template</span>
+            <i data-lucide="external-link" class="w-3 h-3 text-zinc-600 group-hover:text-orange-500"></i>
+          </a>
         </div>
       </div>
 
       <div class="space-y-4">
-        <h3 class="font-mono text-[10px] tracking-widest uppercase text-zinc-500">_Stack</h3>
-        <div class="glass-panel p-6">
-          <div class="flex flex-wrap gap-2">
-            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">SOBER</span>
-            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">FIDDLER</span>
-            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">POSTMAN</span>
-            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">ROBLOX STUDIO</span>
-          </div>
+        <h3 class="font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-500">_System_Stack</h3>
+        <div class="column-box flex flex-wrap gap-2">
+          <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-500">SOBER</span>
+          <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-500">FIDDLER</span>
+          <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-500">POSTMAN</span>
+          <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-500">ROBLOX STUDIO</span>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="max-w-6xl mx-auto px-6 py-6">
-    <div class="flex gap-4 border-b border-zinc-800/50 pb-4">
-      <button onclick="filterProjects('qa')" data-f="qa" class="filter-btn active font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-zinc-800 transition-all">QA Testing</button>
-      <button onclick="filterProjects('top')" data-f="top" class="filter-btn font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-zinc-800 transition-all">Top Visits</button>
+  <section class="max-w-6xl mx-auto px-6 py-6 border-t border-zinc-800/50">
+    <div class="flex gap-4">
+      <button onclick="filterProjects('qa')" data-f="qa" class="filter-btn active font-mono text-[10px] uppercase tracking-[0.2em] px-6 py-3 border border-zinc-800 hover:border-zinc-600 transition-all">QA Testing</button>
+      <button onclick="filterProjects('top')" data-f="top" class="filter-btn font-mono text-[10px] uppercase tracking-[0.2em] px-6 py-3 border border-zinc-800 hover:border-zinc-600 transition-all">Top Visits</button>
     </div>
   </section>
 
   <section class="max-w-6xl mx-auto px-6 py-12">
-    <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+    <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
       </div>
   </section>
 
-  <footer class="max-w-6xl mx-auto px-6 py-24 border-t border-zinc-800/50 flex justify-between items-center">
-    <div class="font-mono text-[10px] text-zinc-600 uppercase">© 2026 RESPAWN_QA</div>
+  <footer class="max-w-6xl mx-auto px-6 py-20 border-t border-zinc-800/50 flex justify-between items-center">
+    <span class="font-mono text-[10px] text-zinc-600 uppercase tracking-widest">© 2026 Respawn // Industrial QA</span>
     <div id="social-row" class="flex gap-4"></div>
   </footer>
 </main>
 
 <script>
-/* ── DATA CONTROL PANEL ── */
 const DATA = {
   socials: {
-    discord: "https://discord.com/users/YOUR_USER_ID", // Replace with your ID
+    discord: "https://discord.com/users/YOUR_DISCORD_ID", // Change to your ID
     website: "#"
   },
   stats: [
@@ -151,8 +138,9 @@ const DATA = {
       id: 1,
       title: "Fast Food Simulator",
       topVisits: "yes",
+      category: "qa",
       tags: ["Stress Testing", "Logic"],
-      desc: "Documented critical exploits and stress-tested server capacity during peak events.",
+      desc: "Comprehensive testing of order logic and player interactions under high server load.",
       stats: "50M+ Visits",
       img: "https://images.unsplash.com/photo-1556742044-3c52d6e88c02?auto=format&fit=crop&q=80&w=800"
     },
@@ -160,8 +148,9 @@ const DATA = {
       id: 2,
       title: "Camo or Snipe",
       topVisits: "yes",
+      category: "qa",
       tags: ["Balancing", "UI/UX"],
-      desc: "Balanced weapon drop rates and performed regression testing on map updates.",
+      desc: "Refined weapon drop rates and performed regression testing on core gameplay mechanics.",
       stats: "30M+ Visits",
       img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800"
     }
@@ -170,47 +159,48 @@ const DATA = {
 
 function icons() { lucide.createIcons(); }
 
-/* ── Render Stats ── */
 function renderStats() {
   const el = document.getElementById('stats-row');
   DATA.stats.forEach(s => {
     const d = document.createElement('div');
     d.className = 'flex flex-col';
     d.innerHTML = `
-      <span class="font-mono text-2xl font-bold text-white">${s.n}</span>
-      <span class="font-mono text-[10px] uppercase text-zinc-600 tracking-tighter">${s.label}</span>
+      <span class="font-mono text-3xl font-bold text-white tracking-tighter">${s.n}</span>
+      <span class="font-mono text-[9px] uppercase text-zinc-600 tracking-widest">${s.label}</span>
     `;
     el.appendChild(d);
   });
 }
 
-/* ── Render Projects ── */
 function renderProjects(filter = 'qa') {
   const grid = document.getElementById('project-grid');
   grid.innerHTML = '';
   
   const filtered = DATA.projects.filter(p => {
     if(filter === 'top') return p.topVisits === 'yes';
-    return true; // Default to QA
+    return true;
   });
 
   filtered.forEach(p => {
     const card = document.createElement('div');
     card.className = 'project-card space-y-4';
+    // RESTORED YOUR ORIGINAL CARD DESIGN
     card.innerHTML = `
-      <div class="aspect-video bg-zinc-900 border border-zinc-800 overflow-hidden">
-        <img src="${p.img}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
+      <div class="relative group bg-zinc-900 border border-zinc-800 overflow-hidden aspect-video">
+        <img src="${p.img}" class="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
       </div>
-      <div class="flex justify-between items-start">
+      <div class="flex justify-between items-start pt-2">
         <div>
-          <h3 class="text-xl font-bold text-white">${p.title}</h3>
+          <h4 class="text-white font-bold text-xl">${p.title}</h4>
           <div class="flex gap-2 mt-2">
-            ${p.tags.map(t => `<span class="text-[9px] font-mono border border-zinc-800 px-2 py-0.5 uppercase text-zinc-500">${t}</span>`).join('')}
+            ${p.tags.map(t => `<span class="text-[9px] font-mono px-2 py-1 border border-zinc-800 text-zinc-500 uppercase">${t}</span>`).join('')}
           </div>
         </div>
-        <span class="font-mono text-[10px] text-orange-500 px-2 py-1 border border-orange-500/20 bg-orange-500/5">${p.stats}</span>
+        <div class="text-right">
+          <span class="text-[10px] font-mono text-orange-500 border border-orange-500/20 px-2 py-1 bg-orange-500/5 uppercase tracking-tighter">${p.stats}</span>
+        </div>
       </div>
-      <p class="text-zinc-500 text-xs leading-relaxed">${p.desc}</p>
+      <p class="text-zinc-500 text-xs leading-relaxed max-w-sm">${p.desc}</p>
     `;
     grid.appendChild(card);
     setTimeout(() => card.classList.add('visible'), 50);
@@ -218,7 +208,6 @@ function renderProjects(filter = 'qa') {
   icons();
 }
 
-/* ── Filter ── */
 function filterProjects(cat) {
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.f === cat);
@@ -226,7 +215,6 @@ function filterProjects(cat) {
   renderProjects(cat);
 }
 
-/* ── Socials ── */
 function renderSocials() {
   const row = document.getElementById('social-row');
   const items = [
@@ -235,15 +223,14 @@ function renderSocials() {
   ];
   items.forEach(s => {
     const a = document.createElement('a');
-    a.href = s.href;
-    a.className = 'w-8 h-8 flex items-center justify-center border border-zinc-800 hover:border-zinc-400 transition-colors';
-    a.innerHTML = `<i data-lucide="${s.icon}" class="w-4 h-4 text-zinc-500"></i>`;
+    a.href = s.href; a.target = '_blank';
+    a.className = 'w-10 h-10 flex items-center justify-center border border-zinc-800 hover:border-orange-500 text-zinc-500 hover:text-orange-500 transition-all';
+    a.innerHTML = `<i data-lucide="${s.icon}" class="w-4 h-4"></i>`;
     row.appendChild(a);
   });
   icons();
 }
 
-// Init
 renderStats();
 renderProjects();
 renderSocials();
