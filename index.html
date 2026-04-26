@@ -60,6 +60,10 @@ body::before {
 .btn-outline{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);transition:background .2s,border-color .2s,transform .15s,box-shadow .2s}
 .btn-outline:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.28);transform:scale(1.04);box-shadow:0 0 16px rgba(0,212,255,.15)}
 
+/* ── Report button ── */
+.btn-report{background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.3);color:#00d4ff;padding:.5rem 1rem;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .2s,border-color .2s,box-shadow .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-report:hover{background:rgba(0,212,255,.2);border-color:rgba(0,212,255,.5);box-shadow:0 0 12px rgba(0,212,255,.2)}
+
 /* ── Animations ── */
 .fade-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .75s cubic-bezier(.22,1,.36,1)}
 .fade-up.visible{opacity:1;transform:translateY(0)}
@@ -93,6 +97,8 @@ body::before {
   position: relative;
   overflow: hidden;
   border-radius: 1.25rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .proj-card::before {
@@ -147,14 +153,11 @@ body::before {
   background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(79,142,255,.05))
 }
 
-/* ── Skill bars ── */
-.skill-fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
-
 /* ── Filter pills ── */
 .pill{cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .15s,box-shadow .2s}
 .pill:not([class*="pill-active"]):hover{border-color:rgba(255,255,255,.28)!important;color:#fff!important;transform:scale(1.04);box-shadow:0 0 12px rgba(0,212,255,.15)}
-.pill-active-all {background:linear-gradient(90deg,#00d4ff,#4f8eff)!important;color:#000!important;border-color:transparent!important;box-shadow:0 0 20px rgba(0,212,255,.3)}
 .pill-active-qa  {background:linear-gradient(90deg,#00d4ff,#4f8eff)!important;color:#000!important;border-color:transparent!important;box-shadow:0 0 20px rgba(0,212,255,.3)}
+.pill-active-visits {background:linear-gradient(90deg,#00d4ff,#4f8eff)!important;color:#000!important;border-color:transparent!important;box-shadow:0 0 20px rgba(0,212,255,.3)}
 
 /* ── Tags — Cyan/Blue only ── */
 .tag-qa {background:rgba(0,212,255,.12); color:#00d4ff; border:1px solid rgba(0,212,255,.3)}
@@ -163,8 +166,46 @@ body::before {
 .status-dot-completed{background:rgba(255,255,255,.24)}
 .status-dot-active   {background:#4f8eff;box-shadow:0 0 6px rgba(79,142,255,.7)}
 
-/* ── Stat strip ── */
+/* ── Stats strip ── */
 .stat-strip{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.15)}
+
+/* ── Expertise list ── */
+.expertise-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.expertise-item{
+  background:rgba(0,212,255,.06);
+  border:1px solid rgba(0,212,255,.15);
+  border-radius:1rem;
+  padding:1.5rem;
+  transition:background .2s,border-color .2s,box-shadow .2s;
+}
+
+.expertise-item:hover{
+  background:rgba(0,212,255,.12);
+  border-color:rgba(0,212,255,.3);
+  box-shadow:0 0 16px rgba(0,212,255,.15);
+}
+
+.expertise-label{
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  color:#00d4ff;
+  font-size:.95rem;
+  margin-bottom:0.75rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.expertise-desc{
+  font-size:.8rem;
+  color:rgba(255,255,255,.4);
+  line-height:1.6;
+}
 
 /* ── Socials ── */
 .social-btn{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;text-decoration:none}
@@ -179,14 +220,61 @@ body::before {
 #mobile-menu.open{display:flex}
 
 /* ── Typography enhancements ── */
-.syne-bold {
-  font-family: 'Syne', sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-}
-
 h1, h2, h3 {
   text-shadow: 0 0 30px rgba(0,212,255,.08);
+}
+
+/* ── Lightbox modal ── */
+.lightbox{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.95);
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+}
+
+.lightbox.active{
+  display:flex;
+}
+
+.lightbox-content{
+  position:relative;
+  max-width:90vw;
+  max-height:90vh;
+}
+
+.lightbox-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius:12px;
+}
+
+.lightbox-close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:40px;
+  height:40px;
+  background:rgba(0,212,255,.15);
+  border:1px solid rgba(0,212,255,.3);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:background .2s;
+  color:#00d4ff;
+}
+
+.lightbox-close:hover{
+  background:rgba(0,212,255,.25);
 }
 </style>
 </head>
@@ -201,8 +289,9 @@ h1, h2, h3 {
      ║    1. Copy one { id:… } block                               ║
      ║    2. Paste it ABOVE the existing first project              ║
      ║    3. The newest project goes at the TOP of the list         ║
-     ║       (the site will display them top-to-bottom)             ║
      ║    4. Make sure each block ends with a comma EXCEPT the last ║
+     ║                                                              ║
+     ║  ADD topVisits: "yes" to make projects appear in "Top Visits" ║
      ║                                                              ║
      ║  Do NOT edit anything below the "ENGINE" comment.           ║
      ╚══════════════════════════════════════════════════════════════╝ -->
@@ -222,10 +311,18 @@ const DATA = {
   stats: [
     { n:"200+", label:"Bugs Logged"      },
     { n:"15+",  label:"Games Tested"     },
-    { n:"70M+",  label:"Vists Contributed" }
+    { n:"70M+",  label:"Visits Contributed" }
+  ],
+  expertise: [
+    { title: "Bug Reporting", desc: "Detailed, structured bug reports with repro steps, severity levels, and visual evidence." },
+    { title: "Technical Suggestions", desc: "Gameplay mechanics, balance feedback, and performance optimization recommendations." },
+    { title: "Regression Testing", desc: "Comprehensive testing of fixes and updates to prevent new issues." },
+    { title: "Documentation", desc: "Clear, professional QA documentation formats and issue tracking." },
+    { title: "Exploit Testing", desc: "Identifying edge cases, exploits, and security vulnerabilities." },
+    { title: "UX/UI Feedback", desc: "Player perspective feedback on user experience and accessibility." }
   ],
   projects: [
-        {
+    {
       id: 16,
       cat:       "QA Testing",
       title:     "Depth Fishing! 🦈",
@@ -233,9 +330,11 @@ const DATA = {
       desc:      "",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/100883017932998/Depth-Fishing"
+      link:      "https://www.roblox.com/games/100883017932998/Depth-Fishing",
+      topVisits: "yes",
+      reportLink: ""
     },
-        {
+    {
       id: 15,
       cat:       "QA Testing",
       title:     "Push a Luckyblock",
@@ -243,17 +342,21 @@ const DATA = {
       desc:      "",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/93956644497252/Push-a-Luckyblock"
+      link:      "https://www.roblox.com/games/93956644497252/Push-a-Luckyblock",
+      topVisits: "yes",
+      reportLink: ""
     },
     {
       id: 14,
       cat:       "QA Testing",
       title:     "Police Response: 911",
       thumbnail: "https://tr.rbxcdn.com/180DAY-d0d06d6a34e6e9b0bb3f0e6abc7ad655/768/432/Image/Webp/noFilter",
-      desc:      "The dev asked for Suggestions,feedbac+k,bugs,balancing, And i provided them all in one clear report.",
+      desc:      "The dev asked for Suggestions,feedback,bugs,balancing, And i provided them all in one clear report.",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/132543027833614/Police-Response-911"
+      link:      "https://www.roblox.com/games/132543027833614/Police-Response-911",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 13,
@@ -263,7 +366,9 @@ const DATA = {
       desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/125700405216363/Camo-Or-Snipe"
+      link:      "https://www.roblox.com/games/125700405216363/Camo-Or-Snipe",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 12,
@@ -273,7 +378,9 @@ const DATA = {
       desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/80860272693373/HATCH-A-BRAINROT#!/game-instances"
+      link:      "https://www.roblox.com/games/80860272693373/HATCH-A-BRAINROT#!/game-instances",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 11,
@@ -283,7 +390,9 @@ const DATA = {
       desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/93998278396472/REEFM-URN"
+      link:      "https://www.roblox.com/games/93998278396472/REEFM-URN",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 10,
@@ -293,7 +402,9 @@ const DATA = {
       desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/94598190739254/Break-the-Sea-for-Brainrots"
+      link:      "https://www.roblox.com/games/94598190739254/Break-the-Sea-for-Brainrots",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 9,
@@ -303,7 +414,9 @@ const DATA = {
       desc:      "Gave the dev reports of unique & major bugs, suggestions, feedback, and balancing notes.",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/72180956157491/Unbox-a-Drill"
+      link:      "https://www.roblox.com/games/72180956157491/Unbox-a-Drill",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 8,
@@ -313,7 +426,9 @@ const DATA = {
       desc:      "Gave the dev my reports of bugs, suggestions, feedback, and balancing.",
       tags:      ["Bugs", "Feedback", "Suggestions", "Balancing"],
       status:    "Completed",
-      link:      "https://roblox.com/games/83840551790663/Dropper-Miners#!/game-instances"
+      link:      "https://roblox.com/games/83840551790663/Dropper-Miners#!/game-instances",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 7,
@@ -323,7 +438,9 @@ const DATA = {
       desc:      "Gave the dev my reports of bugs, suggestions, feedback, and balancing.",
       tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/119055906651998/Fast-Food-Simulator"
+      link:      "https://www.roblox.com/games/119055906651998/Fast-Food-Simulator",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 6,
@@ -333,7 +450,9 @@ const DATA = {
       desc:      "Gave the dev team a complete report on bugs, glitches, feedback, suggestions, and balancing.",
       tags:      ["Bugs", "Feedback", "Suggestions", "Balancing"],
       status:    "Completed",
-      link:      "https://roblox.com/games/126582592441662/Spin-a-Anime-Card"
+      link:      "https://roblox.com/games/126582592441662/Spin-a-Anime-Card",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 5,
@@ -343,7 +462,9 @@ const DATA = {
       desc:      "Gave a complete report covering bugs, what to add/remove, suggestions, and feedback.",
       tags:      ["Bugs", "Feedback", "Suggestions"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/127758462685845/Noob-Tower-Defense"
+      link:      "https://www.roblox.com/games/127758462685845/Noob-Tower-Defense",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 4,
@@ -353,7 +474,9 @@ const DATA = {
       desc:      "Gave the dev suggestions for improvements on lighting, environment, UI/UX, SFX, and more, plus bug reports.",
       tags:      ["Bugs", "Feedback", "Suggestions", "Improvements"],
       status:    "Completed",
-      link:      "https://roblox.com/games/129106858508294/Donate-or-Skip"
+      link:      "https://roblox.com/games/129106858508294/Donate-or-Skip",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 3,
@@ -363,7 +486,9 @@ const DATA = {
       desc:      "Found major game-breaking bugs and gave valuable feedback and suggestions to the devs.",
       tags:      ["Bugs", "Feedback", "Suggestions", "Balancing"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/96062605574136/Dig-Dirt-for-Brainrot"
+      link:      "https://www.roblox.com/games/96062605574136/Dig-Dirt-for-Brainrot",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 2,
@@ -373,7 +498,9 @@ const DATA = {
       desc:      "Gave the dev team a thorough report of bugs, feedback, and suggestions for the game.",
       tags:      ["Bug Reports", "Performance", "Feedback", "Suggestions"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/76163423410722/My-Gym"
+      link:      "https://www.roblox.com/games/76163423410722/My-Gym",
+      topVisits: "",
+      reportLink: ""
     },
     {
       id: 1,
@@ -383,16 +510,10 @@ const DATA = {
       desc:      "Conducted a thorough QA pass — documenting bugs, edge cases, and delivering structured suggestions and feedback to the dev team.",
       tags:      ["Bug Reports", "Suggestions", "Feedback"],
       status:    "Completed",
-      link:      "https://www.roblox.com/games/88154180827048/Paper-Plane-Race"
+      link:      "https://www.roblox.com/games/88154180827048/Paper-Plane-Race",
+      topVisits: "",
+      reportLink: ""
     }
-  ],
-  skills: [
-    { label:"QA Testing",        pct:97, color:"#00d4ff", icon:"bug",       desc:"Roblox QA, gameplay testing, edge case identification & regression testing."       },
-    { label:"Bug Documentation", pct:97, color:"#4f8eff", icon:"target",    desc:"Structured reports with repro steps, severity tags, video evidence & clarity."     },
-    { label:"Exploit Testing",   pct:90, color:"#7aaaff", icon:"shield",    desc:"Identifying & cataloguing exploits before public launch & security audits."      },
-    { label:"UI / UX Critique",  pct:88, color:"#00d4ff", icon:"layers",    desc:"Player-perspective UX feedback, accessibility reviews & user experience."        },
-    { label:"Feedback & Strategy", pct:85, color:"#4f8eff", icon:"message-square", desc:"Constructive player feedback, balancing suggestions & feature recommendations." },
-    { label:"Roblox Studio",     pct:72, color:"#00d4ff", icon:"gamepad-2", desc:"Test environment setup, place-file audits & technical environment validation."    }
   ]
 }; 
 </script>
@@ -409,7 +530,7 @@ const DATA = {
 
   <div class="hidden md:flex" style="align-items:center;gap:2rem">
     <a href="#projects" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Projects</a>
-    <a href="#skills"   style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Skills</a>
+    <a href="#expertise"   style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Expertise</a>
     <a href="#contact"  style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">Contact</a>
   </div>
 
@@ -429,7 +550,7 @@ const DATA = {
 <!-- Mobile menu -->
 <div id="mobile-menu" class="glass" style="position:fixed;top:68px;left:1rem;right:1rem;z-index:40;border-radius:1rem;padding:1rem;flex-direction:column;gap:.5rem">
   <a href="#projects" onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='transparent'">Projects</a>
-  <a href="#skills"   onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='transparent'">Skills</a>
+  <a href="#expertise"   onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='transparent'">Expertise</a>
   <a href="#contact"  onclick="toggleMenu()" style="font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;padding:.5rem .75rem;border-radius:.75rem;display:block;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='transparent'">Contact</a>
 </div>
 
@@ -466,39 +587,42 @@ const DATA = {
   </div>
 </section>
 
+<!-- ══════════════ STATS SECTION (MOVED TO TOP) ══════════════ -->
+<section style="padding:4rem 1.5rem;max-width:80rem;margin:0 auto">
+  <div class="stat-strip fade-up" style="border-radius:1rem;padding:2.5rem">
+    <div id="stat-strip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:2rem;text-align:center"></div>
+  </div>
+</section>
+
 <!-- ══════════════ PROJECTS ══════════════ -->
 <section id="projects" style="padding:6rem 1.5rem;max-width:80rem;margin:0 auto">
 
   <div class="fade-up" style="margin-bottom:3rem">
     <p class="font-dm" style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#00d4ff;margin-bottom:.75rem">Portfolio</p>
-    <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em">QA Testing Expertise</h2>
+    <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em">QA Testing Projects</h2>
   </div>
 
   <div id="filter-bar" class="fade-up d1" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem">
-    <button onclick="filterProjects('All')"             data-f="All"
-      class="pill pill-active-all font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px">All Projects</button>
-    <button onclick="filterProjects('QA Testing')"      data-f="QA Testing"
-      class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
+    <button onclick="filterProjects('QA Testing')" data-f="QA Testing"
+      class="pill pill-active-qa font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px">
       <i data-lucide="bug" style="width:13px;height:13px"></i>QA Testing</button>
+    <button onclick="filterProjects('Top Visits')" data-f="Top Visits"
+      class="pill font-dm" style="font-size:.8rem;font-weight:700;padding:.5rem 1rem;border-radius:99px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:rgba(255,255,255,.55);display:inline-flex;align-items:center;gap:6px">
+      <i data-lucide="trending-up" style="width:13px;height:13px"></i>Top Visits</button>
   </div>
 
-  <!-- Grid: Masonry-style layout -->
+  <!-- Grid: Masonry-style layout with align-items: start to fix tag gap -->
   <div id="project-grid"></div>
 </section>
 
-<!-- ══════════════ SKILLS ══════════════ -->
-<section id="skills" style="padding:6rem 1.5rem;max-width:80rem;margin:0 auto">
-
+<!-- ══════════════ EXPERTISE SECTION ══════════════ -->
+<section id="expertise" style="padding:6rem 1.5rem;max-width:80rem;margin:0 auto">
   <div class="fade-up" style="margin-bottom:3rem">
-    <p class="font-dm" style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#4f8eff;margin-bottom:.75rem">Expertise</p>
-    <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em">Skill Matrix</h2>
+    <p class="font-dm" style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#4f8eff;margin-bottom:.75rem">Core Competencies</p>
+    <h2 class="font-syne" style="font-weight:900;color:#fff;font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.02em">QA Expertise</h2>
   </div>
 
-  <div id="skill-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:1.25rem;margin-bottom:1.5rem"></div>
-
-  <div class="stat-strip fade-up" style="border-radius:1rem;padding:2rem">
-    <div id="stat-strip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1.5rem"></div>
-  </div>
+  <div class="expertise-grid fade-up d1" id="expertise-grid"></div>
 </section>
 
 <!-- ══════════════ CONTACT / FOOTER ══════════════ -->
@@ -522,6 +646,16 @@ const DATA = {
     </div>
   </div>
 </footer>
+
+<!-- ══════════════ LIGHTBOX MODAL ══════════════ -->
+<div id="lightbox" class="lightbox" onclick="if(event.target.id==='lightbox') closeLightbox()">
+  <div class="lightbox-content">
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Report"/>
+    <div class="lightbox-close" onclick="closeLightbox()">
+      <i data-lucide="x" style="width:20px;height:20px"></i>
+    </div>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════════════════════
      ENGINE — DO NOT EDIT BELOW THIS LINE
@@ -628,14 +762,27 @@ function buildThumb(p, m){
   </div>`;
 }
 
-/* ── Render projects — Auto-sort by newest first (top of array) ── */
+/* ── Lightbox functions ── */
+function openLightbox(imgUrl){
+  document.getElementById('lightbox-img').src = imgUrl;
+  document.getElementById('lightbox').classList.add('active');
+}
+
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+/* ── Render projects — Filter by QA Testing or Top Visits ── */
 function renderProjects(filter){
   const grid = document.getElementById('project-grid');
   grid.innerHTML = '';
 
-  const list = filter === 'All'
-    ? DATA.projects
-    : DATA.projects.filter(p => p.cat === filter);
+  let list;
+  if(filter === 'Top Visits'){
+    list = DATA.projects.filter(p => p.topVisits === 'yes');
+  } else {
+    list = DATA.projects.filter(p => p.cat === 'QA Testing');
+  }
 
   if(list.length === 0){
     grid.innerHTML = `<p class="font-dm" style="color:rgba(255,255,255,.3);font-size:.9rem;padding:2rem 0">No projects in this category yet.</p>`;
@@ -666,10 +813,15 @@ function renderProjects(filter){
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem;align-items:flex-start">
         ${p.tags.map(t=>`<span class="${m.tc} font-dm" style="font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:6px;white-space:nowrap">${t}</span>`).join('')}
       </div>
-      <a href="${p.link}" target="_blank" rel="noreferrer" class="view-link font-dm"
-        style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:${m.color};text-decoration:none;margin-top:auto;transition:gap .2s">
-        View Project <i data-lucide="external-link" style="width:12px;height:12px"></i>
-      </a>`;
+      <div style="display:flex;gap:8px;margin-top:auto">
+        <a href="${p.link}" target="_blank" rel="noreferrer" class="view-link font-dm"
+          style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:${m.color};text-decoration:none;transition:gap .2s;flex:1">
+          View Project <i data-lucide="external-link" style="width:12px;height:12px"></i>
+        </a>
+        ${p.reportLink ? `<button onclick="openLightbox('${p.reportLink}')" class="btn-report">
+          <i data-lucide="file-text" style="width:12px;height:12px"></i>Report
+        </button>` : ''}
+      </div>`;
 
     grid.appendChild(card);
     requestAnimationFrame(()=> requestAnimationFrame(()=> card.classList.add('visible')));
@@ -679,9 +831,10 @@ function renderProjects(filter){
 
 /* ── Filter pills ── */
 const PILL_CLS = {
-  'All':       'pill-active-all',
-  'QA Testing': 'pill-active-qa'
+  'QA Testing': 'pill-active-qa',
+  'Top Visits': 'pill-active-visits'
 };
+
 function filterProjects(cat){
   document.querySelectorAll('#filter-bar button').forEach(btn=>{
     const f = btn.dataset.f;
@@ -696,28 +849,20 @@ function filterProjects(cat){
   renderProjects(cat);
 }
 
-/* ── Render skills ── */
-function renderSkills(){
-  const grid = document.getElementById('skill-grid');
-  DATA.skills.forEach((s, i)=>{
-    const card = document.createElement('div');
-    card.className = 'glass fade-up';
-    card.style.cssText = `border-radius:1rem;padding:1.5rem;display:flex;flex-direction:column;gap:1rem;transition-delay:${i * .08}s;border:1px solid rgba(0,212,255,.12)`;
-    card.innerHTML = `
-      <div style="display:flex;align-items:center;gap:.75rem">
-        <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${s.color}1a;border:1px solid ${s.color}30">
-          <i data-lucide="${s.icon}" style="width:17px;height:17px;color:${s.color}"></i>
-        </div>
-        <div>
-          <p class="font-syne" style="font-weight:700;color:#fff;font-size:.9rem">${s.label}</p>
-          <p class="font-dm" style="font-size:.73rem;font-family:monospace;color:${s.color}">${s.pct}%</p>
-        </div>
+/* ── Render expertise ── */
+function renderExpertise(){
+  const grid = document.getElementById('expertise-grid');
+  DATA.expertise.forEach((e, i)=>{
+    const item = document.createElement('div');
+    item.className = 'expertise-item fade-up';
+    item.style.cssText = `transition-delay:${i * .08}s`;
+    item.innerHTML = `
+      <div class="expertise-label">
+        <i data-lucide="check-circle" style="width:16px;height:16px;color:#00d4ff;flex-shrink:0"></i>
+        ${e.title}
       </div>
-      <div style="height:5px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden">
-        <div class="skill-fill" data-pct="${s.pct}" style="background:linear-gradient(90deg,${s.color},${s.color}66)"></div>
-      </div>
-      <p class="font-dm" style="font-size:.75rem;line-height:1.6;color:rgba(255,255,255,.35)">${s.desc}</p>`;
-    grid.appendChild(card);
+      <p class="expertise-desc">${e.desc}</p>`;
+    grid.appendChild(item);
   });
   icons();
 }
@@ -752,12 +897,11 @@ function renderSocials(){
   icons();
 }
 
-/* ── IntersectionObserver: fade-up + skill bars ── */
+/* ── IntersectionObserver: fade-up ── */
 const obs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(!e.isIntersecting) return;
     e.target.classList.add('visible');
-    e.target.querySelectorAll('.skill-fill').forEach(b=>{ b.style.width = b.dataset.pct + '%'; });
     obs.unobserve(e.target);
   });
 }, { threshold: 0.08 });
@@ -765,8 +909,8 @@ const obs = new IntersectionObserver(entries=>{
 function observeAll(){ document.querySelectorAll('.fade-up').forEach(el=> obs.observe(el)); }
 
 /* ── Boot ── */
-renderProjects('All');
-renderSkills();
+renderProjects('QA Testing');
+renderExpertise();
 renderStats();
 renderSocials();
 icons();
