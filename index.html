@@ -248,6 +248,7 @@ body::before{
 .hero-cta{
   display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem;
 }
+
 .btn-primary{
   display:inline-flex;align-items:center;gap:8px;
   padding:.75rem 1.75rem;
@@ -519,19 +520,21 @@ body::before{
 }
 .filter-btn.active:hover{background:#00d4ff;color:#000}
 
+/* ── PROJECT GRID FIX: stretch makes all cards in a row equal height ── */
 #project-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
   gap:1px;
   background:#27272a;
-  align-items:start;
+  align-items:stretch; /* was "start" — this is the core fix */
 }
 
+/* ── CARD FIX: height:100% fills the grid cell ── */
 .proj-card{
   background:#09090b;
   display:flex;
   flex-direction:column;
-  height:auto;
+  height:100%;
   transition:background .25s;
   cursor:default;
   position:relative;
@@ -567,9 +570,11 @@ body::before{
   background:#18181b;
 }
 
+/* ── CARD BODY FIX: flex:1 + flex-direction:column lets footer pin to bottom ── */
 .card-body{
   padding:1.25rem;
-  display:flex;flex-direction:column;
+  display:flex;
+  flex-direction:column;
   flex:1;
 }
 .card-meta{
@@ -603,20 +608,50 @@ body::before{
   line-height:1.3;
   margin-bottom:.5rem;
 }
+
+/* ── DESC FIX: line-clamp to 3 lines, no flex:1 here (spacer handles push) ── */
 .card-desc{
   font-size:.78rem;
   color:#52525b;
   line-height:1.6;
-  margin-bottom:1rem;
-  flex:1;
-}
-.card-desc:empty{margin-bottom:.5rem}
+  margin-bottom:.875rem;
 
-.card-tags{
-  display:flex;flex-wrap:wrap;
-  gap:4px;
-  margin-bottom:1rem;
+  /* Hard cap at 3 lines with ellipsis */
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+
+  /* Reserve space even for empty descs so all cards align */
+  min-height:calc(0.78rem * 1.6 * 3);
 }
+.card-desc:empty{
+  min-height:0;
+  margin-bottom:.5rem;
+}
+
+/* ── TAGS FIX: max 2 rows, overflow hidden with fade mask ── */
+.card-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-bottom:.875rem;
+  max-height:52px; /* ~2 rows of tags */
+  overflow:hidden;
+  position:relative;
+}
+.card-tags.overflows::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:18px;
+  background:linear-gradient(transparent,#09090b);
+  pointer-events:none;
+}
+.proj-card:hover .card-tags.overflows::after{
+  background:linear-gradient(transparent,#0f0f11);
+}
+
 .card-tag{
   font-family:'JetBrains Mono',monospace;
   font-size:.6rem;
@@ -627,14 +662,20 @@ body::before{
   letter-spacing:.06em;
   text-transform:uppercase;
   transition:border-color .2s,color .2s;
+  white-space:nowrap;
 }
 .proj-card:hover .card-tag{border-color:#3f3f46;color:#71717a}
 
+/* ── SPACER: pushes footer to bottom ── */
+.card-spacer{ flex:1; }
+
+/* ── FOOTER FIX: flex-shrink:0 prevents compression ── */
 .card-footer{
   display:flex;align-items:center;justify-content:space-between;
   padding-top:.875rem;
   border-top:1px solid #18181b;
-  margin-top:auto;
+  margin-top:0;
+  flex-shrink:0;
 }
 .card-link{
   display:inline-flex;align-items:center;gap:6px;
@@ -781,13 +822,350 @@ body::before{
 
 @keyframes scrollpulse{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.3;transform:scaleY(.5)}}
 .scroll-line{animation:scrollpulse 2s ease-in-out infinite}
+
+/* ═══════════════════════════════════════════
+   CONTROL PANEL
+═══════════════════════════════════════════ */
+#cp-trigger{
+  position:fixed;
+  bottom:1.5rem;right:1.5rem;
+  z-index:200;
+  width:44px;height:44px;
+  background:#00d4ff;
+  border:none;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 1px rgba(0,212,255,.3),0 8px 32px rgba(0,212,255,.2);
+  transition:background .2s,transform .2s,box-shadow .2s;
+}
+#cp-trigger:hover{
+  background:#33dcff;
+  transform:translateY(-2px);
+  box-shadow:0 0 0 1px rgba(0,212,255,.5),0 12px 40px rgba(0,212,255,.3);
+}
+#cp-trigger-pulse{
+  position:absolute;
+  inset:-4px;
+  border:1px solid rgba(0,212,255,.4);
+  animation:cp-ring 2.5s ease-in-out infinite;
+}
+@keyframes cp-ring{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:0;transform:scale(1.2)}}
+
+#control-panel{
+  position:fixed;
+  bottom:5rem;right:1.5rem;
+  z-index:199;
+  width:min(480px, calc(100vw - 3rem));
+  max-height:calc(100vh - 7rem);
+  background:#09090b;
+  border:1px solid #27272a;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,.8),0 0 0 1px rgba(0,212,255,.06);
+  transform:translateY(12px) scale(.97);
+  opacity:0;
+  pointer-events:none;
+  transition:transform .25s cubic-bezier(.22,1,.36,1),opacity .2s;
+}
+#control-panel.open{
+  transform:translateY(0) scale(1);
+  opacity:1;
+  pointer-events:all;
+}
+
+.cp-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.875rem 1.125rem;
+  border-bottom:1px solid #27272a;
+  flex-shrink:0;
+}
+.cp-title-group{display:flex;align-items:center;gap:10px}
+.cp-icon-box{
+  width:24px;height:24px;
+  background:#00d4ff;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.cp-title{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:#fff;
+}
+.cp-subtitle{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.55rem;color:#3f3f46;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-top:1px;
+}
+.cp-close{
+  width:28px;height:28px;
+  border:1px solid #27272a;
+  background:transparent;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:#52525b;
+  transition:color .2s,border-color .2s;
+}
+.cp-close:hover{color:#fff;border-color:#71717a}
+
+/* Tab bar */
+.cp-tabs{
+  display:flex;
+  border-bottom:1px solid #27272a;
+  flex-shrink:0;
+  overflow-x:auto;
+}
+.cp-tabs::-webkit-scrollbar{height:0}
+.cp-tab{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:.55rem .5rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.58rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:#52525b;
+  border:none;background:transparent;
+  cursor:pointer;
+  border-right:1px solid #27272a;
+  border-bottom:2px solid transparent;
+  transition:color .2s,background .2s,border-color .2s;
+  white-space:nowrap;
+  min-width:0;
+}
+.cp-tab:last-child{border-right:none}
+.cp-tab:hover{color:#a1a1aa;background:#0f0f11}
+.cp-tab.active{
+  color:#00d4ff;
+  background:#0a1a1f;
+  border-bottom-color:#00d4ff;
+}
+
+/* Scrollable body */
+.cp-body{
+  flex:1;
+  overflow-y:auto;
+  padding:1rem 1.125rem;
+  display:flex;flex-direction:column;gap:1rem;
+}
+.cp-body::-webkit-scrollbar{width:3px}
+.cp-body::-webkit-scrollbar-thumb{background:#27272a}
+
+/* Tab panes */
+.cp-pane{display:none}
+.cp-pane.active{display:flex;flex-direction:column;gap:.875rem}
+
+/* Field groups */
+.cp-group{
+  border:1px solid #1a1a1d;
+  background:#0c0c0e;
+}
+.cp-group-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.55rem;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:#3f3f46;
+  padding:.5rem .875rem;
+  border-bottom:1px solid #1a1a1d;
+  display:flex;align-items:center;gap:6px;
+}
+.cp-field{
+  padding:.625rem .875rem;
+  display:flex;align-items:center;gap:.75rem;
+  border-bottom:1px solid #0f0f11;
+}
+.cp-field:last-child{border-bottom:none}
+.cp-field-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem;color:#52525b;
+  letter-spacing:.08em;
+  flex-shrink:0;
+  width:100px;
+}
+.cp-input{
+  flex:1;
+  background:#09090b;
+  border:1px solid #27272a;
+  color:#e4e4e7;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;
+  padding:.375rem .625rem;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  width:100%;
+  min-width:0;
+}
+.cp-input:focus{
+  border-color:#00d4ff;
+  box-shadow:0 0 0 1px rgba(0,212,255,.15);
+}
+.cp-select{
+  flex:1;
+  background:#09090b;
+  border:1px solid #27272a;
+  color:#e4e4e7;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;
+  padding:.375rem .625rem;
+  outline:none;
+  cursor:pointer;
+  transition:border-color .2s;
+  width:100%;
+  min-width:0;
+}
+.cp-select:focus{border-color:#00d4ff}
+.cp-select option{background:#09090b}
+
+/* Project list in panel */
+.cp-proj-list{display:flex;flex-direction:column;gap:0}
+.cp-proj-item{
+  border-bottom:1px solid #0f0f11;
+  overflow:hidden;
+}
+.cp-proj-item:last-child{border-bottom:none}
+.cp-proj-header{
+  display:flex;align-items:center;gap:.625rem;
+  padding:.625rem .875rem;
+  cursor:pointer;
+  transition:background .15s;
+  user-select:none;
+}
+.cp-proj-header:hover{background:#0f0f11}
+.cp-proj-thumb{
+  width:32px;height:20px;
+  object-fit:cover;
+  background:#18181b;
+  flex-shrink:0;
+}
+.cp-proj-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;color:#a1a1aa;
+  flex:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.cp-proj-chevron{
+  color:#3f3f46;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.cp-proj-item.expanded .cp-proj-chevron{transform:rotate(180deg)}
+.cp-proj-fields{
+  display:none;
+  flex-direction:column;
+  padding:.25rem 0 .625rem;
+  background:#080809;
+  border-top:1px solid #0f0f11;
+}
+.cp-proj-item.expanded .cp-proj-fields{display:flex}
+.cp-proj-fields .cp-field{padding:.5rem .875rem}
+.cp-proj-fields .cp-field-label{width:80px;font-size:.58rem}
+
+/* Expertise / report list items */
+.cp-list-item{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .875rem;
+  border-bottom:1px solid #0f0f11;
+}
+.cp-list-item:last-child{border-bottom:none}
+.cp-list-item .cp-input{font-size:.65rem}
+.cp-list-remove{
+  width:22px;height:22px;flex-shrink:0;
+  background:transparent;
+  border:1px solid #1a1a1d;
+  color:#52525b;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:color .2s,border-color .2s;
+}
+.cp-list-remove:hover{color:#f87171;border-color:#f87171}
+.cp-add-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:.5rem .875rem;
+  background:transparent;
+  border:1px solid #1a1a1d;
+  color:#3f3f46;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;
+  width:100%;
+  transition:color .2s,border-color .2s,background .2s;
+  margin-top:.5rem;
+}
+.cp-add-btn:hover{color:#00d4ff;border-color:#00d4ff;background:rgba(0,212,255,.04)}
+
+/* Stats fields */
+.cp-stats-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:.5rem;
+  padding:.625rem .875rem;
+}
+.cp-stat-block{display:flex;flex-direction:column;gap:4px}
+.cp-stat-sublabel{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.55rem;color:#3f3f46;letter-spacing:.1em;
+}
+
+/* Footer buttons */
+.cp-footer{
+  padding:.75rem 1.125rem;
+  border-top:1px solid #27272a;
+  display:flex;align-items:center;gap:.625rem;
+  flex-shrink:0;
+}
+.cp-save{
+  flex:1;
+  padding:.5rem 1rem;
+  background:#00d4ff;
+  color:#000;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:background .2s;
+}
+.cp-save:hover{background:#33dcff}
+.cp-save.saved{background:#22c55e;color:#fff}
+.cp-reset{
+  padding:.5rem .875rem;
+  background:transparent;
+  border:1px solid #27272a;
+  color:#52525b;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;
+  display:flex;align-items:center;gap:5px;
+  transition:color .2s,border-color .2s;
+}
+.cp-reset:hover{color:#f87171;border-color:#f87171}
+
+/* Toast */
+#cp-toast{
+  position:fixed;
+  bottom:5rem;right:1.5rem;
+  z-index:300;
+  padding:.5rem 1rem;
+  background:#18181b;
+  border:1px solid #27272a;
+  border-left:2px solid #00d4ff;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;color:#a1a1aa;
+  letter-spacing:.06em;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .25s,transform .25s;
+  pointer-events:none;
+}
+#cp-toast.show{opacity:1;transform:translateY(0)}
+
 </style>
 </head>
 <body>
 
 <!-- ════════════════════ DATA ════════════════════ -->
 <script>
-const DATA = {
+const DATA_DEFAULT = {
   name:    "Respawn",
   short:   "Respawn",
   title:   "QA Tester & Bug Hunter",
@@ -805,89 +1183,965 @@ const DATA = {
     { n:"70M+", label:"Visits Contributed" }
   ],
   expertise: [
-    { title:"Regression Testing",      sub:"Patch validation & fix verification" },
-    { title:"API Validation",          sub:"Endpoint response & payload testing" },
-    { title:"Bug Reporting",           sub:"Repro steps, severity, visual evidence" },
-    { title:"Exploit Detection",       sub:"Edge cases, exploits, security gaps" },
-    { title:"Performance Benchmarking",sub:"FPS profiling & load stress testing" },
-    { title:"UX / UI Feedback",        sub:"Player perspective & accessibility" },
-    { title:"Balance Analysis",        sub:"Economy, progression & difficulty curves" },
-    { title:"Documentation",           sub:"Structured QA docs & issue tracking" }
+    { title:"Regression Testing"       },
+    { title:"API Validation"           },
+    { title:"Bug Reporting"            },
+    { title:"Exploit Detection"        },
+    { title:"Performance Benchmarking" },
+    { title:"UX / UI Feedback"         },
+    { title:"Balance Analysis"         },
+    { title:"Documentation"            }
   ],
   reports: [
-    { label:"Full Audit — Depth Fishing", tag:"PDF",  href:"https://ibb.co/JFC395Qg" },
-    { label:"Bug Report — Camo Or Snipe", tag:"IMG",  href:"https://ibb.co/nswmWL6r" },
-    { label:"Bug Report Template",        tag:"DOC",  href:"#" },
-    { label:"UX Feedback — Donate or Skip",tag:"IMG", href:"#" },
-    { label:"Regression Log — My Gym",    tag:"LOG",  href:"#" }
-  ],
-  stack: [
-    { name:"Roblox Studio", cat:"Platform"   },
-    { name:"Postman",       cat:"API Tools"  },
-    { name:"Fiddler",       cat:"Network"    },
-    { name:"Sober",         cat:"Emulation"  },
-    { name:"Discord",       cat:"Reporting"  },
-    { name:"OBS Studio",    cat:"Capture"    },
-    { name:"Gyazo",         cat:"Evidence"   },
-    { name:"Notion",        cat:"Docs"       }
+    { label:"Full Audit — Depth Fishing",   tag:"PDF", href:"https://ibb.co/JFC395Qg" },
+    { label:"Bug Report — Camo Or Snipe",   tag:"IMG", href:"https://ibb.co/nswmWL6r" },
+    { label:"Bug Report Template",          tag:"DOC", href:"#" },
+    { label:"UX Feedback — Donate or Skip", tag:"IMG", href:"#" },
+    { label:"Regression Log — My Gym",      tag:"LOG", href:"#" }
   ],
   projects: [
-    {
-      id: 16,
-      cat:       "QA Testing",
-      title:     "Depth Fishing! 🦈",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-2d1cb5d416599c76c6c924926a09a701/768/432/Image/Webp/noFilter",
-      desc:      "",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/100883017932998/Depth-Fishing",
-      topVisits: "yes",
-      reportImg: "https://ibb.co/JFC395Qg"
-    },
-    {
-      id: 15,
-      cat:       "QA Testing",
-      title:     "Push a Luckyblock",
-      thumbnail: "https://t5.rbxcdn.com/180DAY-2d1bce8a7bbdcdd0e6dc378c7b6f566c",
-      desc:      "",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/93956644497252/Push-a-Luckyblock",
-      topVisits: "yes",
-      reportImg: ""
-    },
-    {
-      id: 14,
-      cat:       "QA Testing",
-      title:     "Police Response: 911",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-d0d06d6a34e6e9b0bb3f0e6abc7ad655/768/432/Image/Webp/noFilter",
-      desc:      "The dev asked for Suggestions,feedback,bugs,balancing, And i provided them all in one clear report.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/132543027833614/Police-Response-911",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 13,
-      cat:       "QA Testing",
-      title:     "Camo or Snipe",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-e9b38a62b7fc3d8d0f9e87c32cbf8af6/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/125700405216363/Camo-Or-Snipe",
-      topVisits: "",
-      reportImg: "https://ibb.co/nswmWL6r"
-    },
-    {
-      id: 12,
-      cat:       "QA Testing",
-      title:     "HATCH A BRAINROT",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-116fb2b13aa8457d4be79f5c4ba650f5/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
+    { id:16, cat:"QA Testing", title:"Depth Fishing! 🦈",    thumbnail:"https://tr.rbxcdn.com/180DAY-2d1cb5d416599c76c6c924926a09a701/768/432/Image/Webp/noFilter", desc:"",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/100883017932998/Depth-Fishing",topVisits:"yes",reportImg:"https://ibb.co/JFC395Qg" },
+    { id:15, cat:"QA Testing", title:"Push a Luckyblock",     thumbnail:"https://t5.rbxcdn.com/180DAY-2d1bce8a7bbdcdd0e6dc378c7b6f566c",desc:"",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/93956644497252/Push-a-Luckyblock",topVisits:"yes",reportImg:"" },
+    { id:14, cat:"QA Testing", title:"Police Response: 911",  thumbnail:"https://tr.rbxcdn.com/180DAY-d0d06d6a34e6e9b0bb3f0e6abc7ad655/768/432/Image/Webp/noFilter",desc:"The dev asked for Suggestions,feedback,bugs,balancing, And i provided them all in one clear report.",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/132543027833614/Police-Response-911",topVisits:"",reportImg:"" },
+    { id:13, cat:"QA Testing", title:"Camo or Snipe",         thumbnail:"https://tr.rbxcdn.com/180DAY-e9b38a62b7fc3d8d0f9e87c32cbf8af6/768/432/Image/Webp/noFilter",desc:"Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/125700405216363/Camo-Or-Snipe",topVisits:"",reportImg:"https://ibb.co/nswmWL6r" },
+    { id:12, cat:"QA Testing", title:"HATCH A BRAINROT",      thumbnail:"https://tr.rbxcdn.com/180DAY-116fb2b13aa8457d4be79f5c4ba650f5/768/432/Image/Webp/noFilter",desc:"Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/80860272693373/HATCH-A-BRAINROT#!/game-instances",topVisits:"",reportImg:"" },
+    { id:11, cat:"QA Testing", title:"REEFMØURN",             thumbnail:"https://tr.rbxcdn.com/180DAY-0ca5592516632e42a88f2f07e3726be3/768/432/Image/Webp/noFilter",desc:"Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/93998278396472/REEFM-URN",topVisits:"",reportImg:"" },
+    { id:10, cat:"QA Testing", title:"Break Sea For Brainrot", thumbnail:"https://images-ext-1.discordapp.net/external/wcz13wFy-6pqdHEeuLc9SS8K-GVsn8Zk5sAHcuBLdk0/https/tr.rbxcdn.com/180DAY-d5d4a71ea58a844c647aa8394b33ef56/500/280/Image/Jpeg/noFilter?format=webp&quality=lossless&width=640&height=360",desc:"Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/94598190739254/Break-the-Sea-for-Brainrots",topVisits:"",reportImg:"" },
+    { id:9,  cat:"QA Testing", title:"Unbox A Drill",         thumbnail:"https://tr.rbxcdn.com/180DAY-e86c96fe134fe2e12f30a17ffa338c9e/768/432/Image/Webp/noFilter",desc:"Gave the dev reports of unique & major bugs, suggestions, feedback, and balancing notes.",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/72180956157491/Unbox-a-Drill",topVisits:"",reportImg:"" },
+    { id:8,  cat:"QA Testing", title:"Dropper Miners",        thumbnail:"https://tr.rbxcdn.com/180DAY-0eb8e76ccb4478561919687e57105705/768/432/Image/Webp/noFilter",desc:"Gave the dev my reports of bugs, suggestions, feedback, and balancing.",tags:["Bugs","Feedback","Suggestions","Balancing"],status:"Completed",link:"https://roblox.com/games/83840551790663/Dropper-Miners#!/game-instances",topVisits:"",reportImg:"" },
+    { id:7,  cat:"QA Testing", title:"Fast Food Simulator",   thumbnail:"https://tr.rbxcdn.com/180DAY-807bfe0d079ac809222020573952b620/768/432/Image/Webp/noFilter",desc:"Gave the dev my reports of bugs, suggestions, feedback, and balancing.",tags:["Bugs","Suggestions","Feedback","Balancing"],status:"Completed",link:"https://www.roblox.com/games/119055906651998/Fast-Food-Simulator",topVisits:"",reportImg:"" },
+    { id:6,  cat:"QA Testing", title:"Spin a Anime Card",     thumbnail:"https://tr.rbxcdn.com/180DAY-385154356aecb9d4005b77effb38e7af/768/432/Image/Webp/noFilter",desc:"Gave the dev team a complete report on bugs, glitches, feedback, suggestions, and balancing.",tags:["Bugs","Feedback","Suggestions","Balancing"],status:"Completed",link:"https://roblox.com/games/126582592441662/Spin-a-Anime-Card",topVisits:"",reportImg:"" },
+    { id:5,  cat:"QA Testing", title:"Noob Tower Defense",    thumbnail:"https://tr.rbxcdn.com/180DAY-c5428c865c8af1e89fc0bb837e97f827/768/432/Image/Webp/noFilter",desc:"Gave a complete report covering bugs, what to add/remove, suggestions, and feedback.",tags:["Bugs","Feedback","Suggestions"],status:"Completed",link:"https://www.roblox.com/games/127758462685845/Noob-Tower-Defense",topVisits:"",reportImg:"" },
+    { id:4,  cat:"QA Testing", title:"Donate or Skip",        thumbnail:"https://tr.rbxcdn.com/180DAY-f0a264368ff8d43e3b89dc711acb5d8b/768/432/Image/Webp/noFilter",desc:"Gave the dev suggestions for improvements on lighting, environment, UI/UX, SFX, and more, plus bug reports.",tags:["Bugs","Feedback","Suggestions","Improvements"],status:"Completed",link:"https://roblox.com/games/129106858508294/Donate-or-Skip",topVisits:"",reportImg:"" },
+    { id:3,  cat:"QA Testing", title:"Dig Dirt For Brainrot", thumbnail:"https://tr.rbxcdn.com/180DAY-d217bd08b26f2639836813c4b60dbab7/768/432/Image/Webp/noFilter",desc:"Found major game-breaking bugs and gave valuable feedback and suggestions to the devs.",tags:["Bugs","Feedback","Suggestions","Balancing"],status:"Completed",link:"https://www.roblox.com/games/96062605574136/Dig-Dirt-for-Brainrot",topVisits:"",reportImg:"" },
+    { id:2,  cat:"QA Testing", title:"My Gym",                thumbnail:"https://tr.rbxcdn.com/180DAY-88e81fc05032e4446531557365de2a74/768/432/Image/Webp/noFilter",desc:"Gave the dev team a thorough report of bugs, feedback, and suggestions for the game.",tags:["Bug Reports","Performance","Feedback","Suggestions"],status:"Completed",link:"https://www.roblox.com/games/76163423410722/My-Gym",topVisits:"",reportImg:"" },
+    { id:1,  cat:"QA Testing", title:"Paper Plane Race",      thumbnail:"https://tr.rbxcdn.com/180DAY-dbd093caa70cde7b945186cc855d0914/768/432/Image/Webp/noFilter",desc:"Conducted a thorough QA pass — documenting bugs, edge cases, and delivering structured suggestions and feedback to the dev team.",tags:["Bug Reports","Suggestions","Feedback"],status:"Completed",link:"https://www.roblox.com/games/88154180827048/Paper-Plane-Race",topVisits:"",reportImg:"" }
+  ]
+};
+
+// Load from localStorage if saved, else use defaults
+let DATA = JSON.parse(localStorage.getItem('portfolio_data') || 'null') || JSON.parse(JSON.stringify(DATA_DEFAULT));
+</script>
+
+<!-- ════════════════════ NAVBAR ════════════════════ -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-box">
+      <i data-lucide="bug" style="width:14px;height:14px;color:#000;stroke-width:2.5"></i>
+    </div>
+    <span class="nav-name" id="nav-name"></span>
+  </a>
+
+  <div class="nav-links">
+    <a href="#projects-section" class="nav-link">Projects</a>
+    <a href="#evidence-section" class="nav-link">Expertise</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <a href="" id="nav-discord-link" target="_blank" rel="noreferrer" class="nav-discord">
+      <i data-lucide="message-square" style="width:13px;height:13px;flex-shrink:0"></i>
+      <span class="nav-discord-label" id="nav-label"></span>
+    </a>
+    <button onclick="toggleMenu()" id="hamburger">
+      <i data-lucide="menu" style="width:15px;height:15px"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div id="mobile-menu">
+  <a href="#projects-section" onclick="toggleMenu()" class="nav-link" style="font-size:.85rem">Projects</a>
+  <a href="#evidence-section" onclick="toggleMenu()" class="nav-link" style="font-size:.85rem">Expertise</a>
+  <a href="#contact" onclick="toggleMenu()" class="nav-link" style="font-size:.85rem">Contact</a>
+</div>
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<section id="hero" class="grid-bg">
+  <div class="hero-glow"></div>
+  <div class="hero-accent-line"></div>
+  <div class="hero-corner tl"></div>
+  <div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div>
+  <div class="hero-corner br"></div>
+
+  <div class="hero-inner">
+    <div id="hero-badge" class="status-badge fade-up visible">
+      <div style="width:6px;height:6px;background:#00d4ff;animation:livepulse 1.8s ease-in-out infinite;flex-shrink:0"></div>
+      <span class="mono" style="color:#00d4ff" id="hero-badge-text"></span>
+    </div>
+
+    <div class="hero-eyebrow fade-up visible d1">QA Lead Portfolio — Roblox Games</div>
+
+    <h1 class="hero-name grad-white fade-up visible d2" id="hero-name"></h1>
+
+    <div class="hero-roles fade-up visible d3">
+      <span class="mono" id="typewriter-text"></span>
+      <span class="cursor"></span>
+    </div>
+
+    <p class="hero-tagline fade-up visible d4" id="hero-tagline"></p>
+
+    <div class="hero-cta fade-up visible d5">
+      <a href="#projects-section" class="btn-primary">
+        <i data-lucide="bug" style="width:14px;height:14px"></i>
+        View Projects
+      </a>
+      <a href="#contact" class="btn-secondary">
+        Get In Touch
+        <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-hint fade-up visible d6">
+    <div class="scroll-line"></div>
+    <span class="mono">scroll</span>
+  </div>
+</section>
+
+<!-- ════════════════════ STATS ════════════════════ -->
+<section id="stats-section">
+  <div class="stats-inner" id="stat-strip"></div>
+</section>
+
+<!-- ════════════════════ EVIDENCE & EXPERTISE ════════════════════ -->
+<section id="evidence-section">
+  <div id="evidence-section-inner">
+    <div class="evidence-header fade-up">
+      <div>
+        <div class="section-label">Evidence & Expertise</div>
+        <div class="section-title">Core Competencies</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#3f3f46;letter-spacing:.12em;margin-top:auto;padding-bottom:4px">QA_MATRIX v2.1</div>
+    </div>
+
+    <div class="triple-grid fade-up d1">
+      <div class="triple-col">
+        <div class="col-header">
+          <i data-lucide="check-circle-2" style="width:12px;height:12px;color:#3f3f46;flex-shrink:0"></i>
+          <span class="col-title">QA Competencies</span>
+        </div>
+        <div class="expertise-list" id="expertise-list"></div>
+      </div>
+      <div class="triple-col">
+        <div class="col-header">
+          <i data-lucide="folder-open" style="width:12px;height:12px;color:#3f3f46;flex-shrink:0"></i>
+          <span class="col-title">Report Evidence</span>
+        </div>
+        <div class="report-list" id="report-list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ PROJECTS ════════════════════ -->
+<section id="projects-section">
+  <div class="projects-inner">
+    <div class="fade-up" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:2.5rem">
+      <div>
+        <div class="section-label">Portfolio</div>
+        <div class="section-title">QA Testing Projects</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#3f3f46;letter-spacing:.1em" id="project-count-label">
+        — / — ENGAGEMENTS
+      </div>
+    </div>
+
+    <div class="filter-bar fade-up d1">
+      <button class="filter-btn active" data-f="QA Testing" onclick="filterProjects('QA Testing')">
+        <i data-lucide="bug" style="width:11px;height:11px"></i>
+        QA Testing
+      </button>
+      <button class="filter-btn" data-f="Top Visits" onclick="filterProjects('Top Visits')">
+        <i data-lucide="trending-up" style="width:11px;height:11px"></i>
+        Top Visits
+      </button>
+    </div>
+
+    <div id="project-grid"></div>
+  </div>
+</section>
+
+<!-- ════════════════════ CONTACT ════════════════════ -->
+<footer id="contact">
+  <div class="contact-inner">
+    <div class="fade-up">
+      <div class="contact-label">Let's Connect</div>
+      <h2 class="contact-title">Got a project<br>in mind?</h2>
+      <a id="footer-discord-link" href="" target="_blank" rel="noreferrer" class="discord-btn">
+        <i data-lucide="message-square" style="width:15px;height:15px"></i>
+        Message on Discord
+      </a>
+    </div>
+
+    <div class="contact-meta fade-up d1">
+      <div class="meta-block">
+        <div class="meta-block-label">Availability</div>
+        <div class="meta-block-val available" id="footer-status"></div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-block-label">Discord Handle</div>
+        <div class="meta-block-val" id="footer-handle"></div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-block-label">Specialization</div>
+        <div class="meta-block-val" style="font-size:.75rem">Roblox QA / Bug Hunting / Game Testing</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom fade-up d2">
+    <span class="footer-cr" id="footer-cr"></span>
+    <div class="social-links" id="social-row"></div>
+  </div>
+</footer>
+
+<!-- ════════════════════ LIGHTBOX ════════════════════ -->
+<div id="lightbox" class="lightbox" onclick="if(event.target.id==='lightbox') closeLightbox()">
+  <div class="lightbox-content">
+    <div class="lightbox-close" onclick="closeLightbox()">
+      <i data-lucide="x" style="width:14px;height:14px"></i>
+    </div>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Report"/>
+  </div>
+</div>
+
+<!-- ════════════════════ CONTROL PANEL ════════════════════ -->
+<button id="cp-trigger" onclick="toggleCP()" title="Control Panel">
+  <div id="cp-trigger-pulse"></div>
+  <i data-lucide="settings-2" style="width:18px;height:18px;color:#000;position:relative;z-index:1"></i>
+</button>
+
+<div id="control-panel">
+  <!-- Header -->
+  <div class="cp-header">
+    <div class="cp-title-group">
+      <div class="cp-icon-box">
+        <i data-lucide="settings-2" style="width:12px;height:12px;color:#000"></i>
+      </div>
+      <div>
+        <div class="cp-title">Control Panel</div>
+        <div class="cp-subtitle">Live portfolio editor</div>
+      </div>
+    </div>
+    <button class="cp-close" onclick="toggleCP()">
+      <i data-lucide="x" style="width:12px;height:12px"></i>
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="cp-tabs">
+    <button class="cp-tab active" data-tab="identity" onclick="switchTab('identity')">
+      <i data-lucide="user" style="width:10px;height:10px"></i>Identity
+    </button>
+    <button class="cp-tab" data-tab="stats" onclick="switchTab('stats')">
+      <i data-lucide="bar-chart-2" style="width:10px;height:10px"></i>Stats
+    </button>
+    <button class="cp-tab" data-tab="skills" onclick="switchTab('skills')">
+      <i data-lucide="zap" style="width:10px;height:10px"></i>Skills
+    </button>
+    <button class="cp-tab" data-tab="reports" onclick="switchTab('reports')">
+      <i data-lucide="file-text" style="width:10px;height:10px"></i>Reports
+    </button>
+    <button class="cp-tab" data-tab="projects" onclick="switchTab('projects')">
+      <i data-lucide="bug" style="width:10px;height:10px"></i>Projects
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="cp-body">
+
+    <!-- IDENTITY TAB -->
+    <div class="cp-pane active" id="tab-identity">
+      <div class="cp-group">
+        <div class="cp-group-label">
+          <i data-lucide="user" style="width:9px;height:9px"></i>Profile
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Name</span>
+          <input class="cp-input" id="cp-name" type="text" placeholder="Respawn"/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Tagline</span>
+          <input class="cp-input" id="cp-tagline" type="text" placeholder="Breaking games..."/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Status</span>
+          <select class="cp-select" id="cp-status">
+            <option value="Available">Available</option>
+            <option value="Busy">Busy</option>
+            <option value="Unavailable">Unavailable</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cp-group">
+        <div class="cp-group-label">
+          <i data-lucide="link" style="width:9px;height:9px"></i>Links & Socials
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Discord @</span>
+          <input class="cp-input" id="cp-discord-handle" type="text" placeholder="username"/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Discord URL</span>
+          <input class="cp-input" id="cp-discord-url" type="text" placeholder="https://discord.com/users/..."/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Website URL</span>
+          <input class="cp-input" id="cp-website-url" type="text" placeholder="https://..."/>
+        </div>
+      </div>
+
+      <div class="cp-group">
+        <div class="cp-group-label">
+          <i data-lucide="type" style="width:9px;height:9px"></i>Typewriter Roles
+          <span style="color:#27272a;margin-left:auto;font-size:.52rem">one per line</span>
+        </div>
+        <div class="cp-field" style="align-items:flex-start">
+          <textarea class="cp-input" id="cp-roles" rows="5"
+            style="resize:vertical;line-height:1.8;padding:.5rem .625rem;font-size:.65rem"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS TAB -->
+    <div class="cp-pane" id="tab-stats">
+      <div class="cp-group">
+        <div class="cp-group-label">
+          <i data-lucide="bar-chart-2" style="width:9px;height:9px"></i>Hero Stats (3 shown on site)
+        </div>
+        <div id="cp-stats-container"></div>
+      </div>
+    </div>
+
+    <!-- SKILLS TAB -->
+    <div class="cp-pane" id="tab-skills">
+      <div class="cp-group">
+        <div class="cp-group-label">
+          <i data-lucide="zap" style="width:9px;height:9px"></i>QA Competencies
+        </div>
+        <div class="cp-list-item" style="padding:.5rem .875rem .25rem;border-bottom:none">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:#3f3f46;letter-spacing:.1em">SKILL NAME</span>
+        </div>
+        <div id="cp-skills-list"></div>
+        <button class="cp-add-btn" onclick="addSkill()">
+          <i data-lucide="plus" style="width:10px;height:10px"></i>Add Skill
+        </button>
+      </div>
+    </div>
+
+    <!-- REPORTS TAB -->
+    <div class="cp-pane" id="tab-reports">
+      <div class="cp-group">
+        <div class="cp-group-label">
+          <i data-lucide="folder-open" style="width:9px;height:9px"></i>Report Evidence
+        </div>
+        <div id="cp-reports-list"></div>
+        <button class="cp-add-btn" onclick="addReport()">
+          <i data-lucide="plus" style="width:10px;height:10px"></i>Add Report
+        </button>
+      </div>
+    </div>
+
+    <!-- PROJECTS TAB -->
+    <div class="cp-pane" id="tab-projects">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:#3f3f46;letter-spacing:.08em;padding:.25rem 0">
+        Click a project to expand and edit. Changes apply on Save.
+      </div>
+      <div class="cp-group">
+        <div class="cp-group-label">
+          <i data-lucide="bug" style="width:9px;height:9px"></i>Projects
+          <span style="color:#27272a;margin-left:auto;font-size:.52rem" id="cp-proj-count"></span>
+        </div>
+        <div class="cp-proj-list" id="cp-proj-list"></div>
+        <button class="cp-add-btn" onclick="addProject()">
+          <i data-lucide="plus" style="width:10px;height:10px"></i>Add Project
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /cp-body -->
+
+  <!-- Footer -->
+  <div class="cp-footer">
+    <button class="cp-save" id="cp-save-btn" onclick="cpSave()">
+      <i data-lucide="save" style="width:12px;height:12px"></i>Apply & Save
+    </button>
+    <button class="cp-reset" onclick="cpReset()">
+      <i data-lucide="rotate-ccw" style="width:11px;height:11px"></i>Reset
+    </button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="cp-toast">CHANGES_SAVED</div>
+
+<style>
+@keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+</style>
+
+<!-- ════════════════════ ENGINE ════════════════════ -->
+<script>
+function icons(){ if(window.lucide) lucide.createIcons(); }
+
+/* ─── Render page from DATA ─── */
+function renderPage(){
+  /* Static text */
+  document.getElementById('nav-name').textContent      = DATA.short || DATA.name;
+  document.getElementById('nav-label').textContent     = DATA.discord;
+  document.getElementById('hero-name').textContent     = DATA.short || DATA.name;
+  document.getElementById('hero-tagline').textContent  = DATA.tagline;
+  document.getElementById('footer-cr').textContent     = '© ' + new Date().getFullYear() + ' ' + DATA.name + ' — All rights reserved.';
+  document.getElementById('footer-status').textContent = DATA.status === 'Available' ? 'Available for Work' : DATA.status;
+  document.getElementById('footer-handle').textContent = DATA.discord;
+
+  /* Discord links */
+  document.getElementById('nav-discord-link').href    = DATA.socials.discord;
+  document.getElementById('footer-discord-link').href = DATA.socials.discord;
+
+  /* Hero badge */
+  const ok = DATA.status === 'Available';
+  const t  = document.getElementById('hero-badge-text');
+  t.textContent = ok ? 'Available for Work' : DATA.status;
+  const dot = document.querySelector('#hero-badge div');
+  if(dot){
+    dot.style.background  = ok ? '#00d4ff' : '#3f3f46';
+    dot.style.animation   = ok ? 'livepulse 1.8s ease-in-out infinite' : 'none';
+  }
+  t.style.color = ok ? '#00d4ff' : '#71717a';
+
+  renderStats();
+  renderExpertise();
+  renderReports();
+  renderProjects(currentFilter);
+  renderSocials();
+}
+
+/* ── Navbar scroll ── */
+window.addEventListener('scroll', ()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ── Mobile menu ── */
+function toggleMenu(){ document.getElementById('mobile-menu').classList.toggle('open'); }
+document.addEventListener('click', e=>{
+  const m = document.getElementById('mobile-menu');
+  const h = document.getElementById('hamburger');
+  if(m && h && !m.contains(e.target) && !h.contains(e.target)) m.classList.remove('open');
+});
+
+/* ── Typewriter ── */
+let twWi = 0, twCi = 0, twDel = false;
+function startTypewriter(){
+  const el = document.getElementById('typewriter-text');
+  if(!el) return;
+  el.textContent = '';
+  twWi = 0; twCi = 0; twDel = false;
+  function tick(){
+    if(!DATA.roles || !DATA.roles.length) return;
+    const w = DATA.roles[twWi % DATA.roles.length];
+    el.textContent = w.slice(0, twCi);
+    if(!twDel){ twCi++; if(twCi > w.length){ twDel=true; setTimeout(tick,1800); return; } }
+    else      { twCi--; if(twCi < 0){ twCi=0; twDel=false; twWi=(twWi+1)%DATA.roles.length; setTimeout(tick,300); return; } }
+    setTimeout(tick, twDel ? 42 : 80);
+  }
+  tick();
+}
+
+/* ── Stats ── */
+function renderStats(){
+  const el = document.getElementById('stat-strip');
+  el.innerHTML = '';
+  DATA.stats.forEach((s, i)=>{
+    const d = document.createElement('div');
+    d.className = 'stat-cell fade-up';
+    d.style.transitionDelay = (i * .1) + 's';
+    d.innerHTML = `
+      <span class="stat-num">${s.n}</span>
+      <span class="stat-label">${s.label}</span>
+      <div class="stat-accent"></div>`;
+    el.appendChild(d);
+  });
+  observeAll();
+}
+
+/* ── Expertise ── */
+function renderExpertise(){
+  const el = document.getElementById('expertise-list');
+  el.innerHTML = '';
+  DATA.expertise.forEach((e, i)=>{
+    const item = document.createElement('div');
+    item.className = 'expertise-item fade-up';
+    item.style.transitionDelay = (i * .05) + 's';
+    item.innerHTML = `
+      <div class="expertise-bullet"></div>
+      <div class="expertise-text">${e.title}</div>`;
+    el.appendChild(item);
+  });
+  observeAll();
+}
+
+/* ── Reports ── */
+function renderReports(){
+  const el = document.getElementById('report-list');
+  el.innerHTML = '';
+  DATA.reports.forEach((r, i)=>{
+    const btn = document.createElement('a');
+    btn.className = 'report-btn fade-up';
+    btn.style.transitionDelay = (i * .05) + 's';
+    btn.href = r.href;
+    if(r.href && r.href !== '#'){
+      btn.target = '_blank';
+      btn.rel    = 'noreferrer';
+    } else {
+      btn.addEventListener('click', e => { if(r.href === '#') e.preventDefault(); });
+    }
+    btn.innerHTML = `
+      <i data-lucide="file-text" style="width:11px;height:11px" class="report-row-icon"></i>
+      <span class="report-label">${r.label}</span>
+      <span class="report-tag">${r.tag}</span>
+      <i data-lucide="external-link" style="width:9px;height:9px;color:#27272a;flex-shrink:0"></i>`;
+    el.appendChild(btn);
+  });
+  observeAll();
+}
+
+/* ── Lightbox ── */
+function openLightbox(url){
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+/* ── Projects ── */
+let currentFilter = 'QA Testing';
+
+function renderProjects(filter){
+  currentFilter = filter;
+  const grid  = document.getElementById('project-grid');
+  const label = document.getElementById('project-count-label');
+  grid.innerHTML = '';
+
+  const list = filter === 'Top Visits'
+    ? DATA.projects.filter(p => p.topVisits === 'yes')
+    : DATA.projects.filter(p => p.cat === 'QA Testing');
+
+  label.textContent = String(list.length).padStart(2,'0') + ' / ' + String(DATA.projects.length).padStart(2,'0') + ' ENGAGEMENTS';
+
+  if(!list.length){
+    grid.innerHTML = `<div style="padding:3rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#27272a">NO_RECORDS_FOUND</div>`;
+    return;
+  }
+
+  list.forEach((p, i)=>{
+    const isActive = p.status === 'Ongoing' || p.status === 'Deployed';
+    const card = document.createElement('div');
+    card.className   = 'proj-card fade-up';
+    card.style.transitionDelay = (i * .04) + 's';
+
+    const thumbHtml = p.thumbnail
+      ? `<div class="card-thumb">
+           ${p.topVisits === 'yes' ? '<div class="top-visit-badge">TOP VISITS</div>' : ''}
+           <div class="card-accent-bar"></div>
+           <img src="${p.thumbnail}" alt="${p.title}" loading="lazy"
+             onerror="this.parentElement.innerHTML='<div class=\\'card-thumb-placeholder\\'><i data-lucide=\\'bug\\' style=\\'width:28px;height:28px;color:#27272a\\'></i></div>';icons()"/>
+         </div>`
+      : `<div class="card-thumb">
+           ${p.topVisits === 'yes' ? '<div class="top-visit-badge">TOP VISITS</div>' : ''}
+           <div class="card-accent-bar"></div>
+           <div class="card-thumb-placeholder"><i data-lucide="bug" style="width:28px;height:28px;color:#27272a"></i></div>
+         </div>`;
+
+    card.innerHTML = `
+      ${thumbHtml}
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-status">
+            <div class="status-dot ${isActive ? 'active' : ''}"></div>
+            ${p.status.toUpperCase()}
+          </span>
+        </div>
+        <h3 class="card-title">${p.title}</h3>
+        ${p.desc ? `<p class="card-desc">${p.desc}</p>` : '<p class="card-desc"></p>'}
+        <div class="card-tags">
+          ${p.tags.map(t=>`<span class="card-tag">${t}</span>`).join('')}
+        </div>
+        <div class="card-spacer"></div>
+        <div class="card-footer">
+          <a href="${p.link}" target="_blank" rel="noreferrer" class="card-link">
+            View Project
+            <i data-lucide="external-link" style="width:10px;height:10px"></i>
+          </a>
+        </div>
+      </div>`;
+
+    grid.appendChild(card);
+
+    /* Mark overflowing tag containers for fade mask */
+    requestAnimationFrame(()=>{
+      const tagsEl = card.querySelector('.card-tags');
+      if(tagsEl && tagsEl.scrollHeight > tagsEl.clientHeight + 2){
+        tagsEl.classList.add('overflows');
+      }
+      requestAnimationFrame(()=> card.classList.add('visible'));
+    });
+  });
+  icons();
+  observeAll();
+}
+
+/* ── Filter ── */
+function filterProjects(cat){
+  document.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.f === cat);
+  });
+  renderProjects(cat);
+}
+
+/* ── Socials ── */
+function renderSocials(){
+  const items = [
+    { href: DATA.socials.discord, icon:'message-square', label:'Discord' },
+    { href: DATA.socials.website, icon:'globe',          label:'Website' }
+  ];
+  const row = document.getElementById('social-row');
+  row.innerHTML = '';
+  items.forEach(s=>{
+    const a = document.createElement('a');
+    a.href = s.href; a.target = '_blank'; a.rel = 'noreferrer'; a.title = s.label;
+    a.className = 'social-btn';
+    a.innerHTML = `<i data-lucide="${s.icon}" style="width:14px;height:14px;color:#52525b"></i>`;
+    row.appendChild(a);
+  });
+  icons();
+}
+
+/* ── IntersectionObserver ── */
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(!e.isIntersecting) return; e.target.classList.add('visible'); obs.unobserve(e.target); });
+}, { threshold: 0.06 });
+function observeAll(){ document.querySelectorAll('.fade-up:not(.visible)').forEach(el=> obs.observe(el)); }
+
+/* ═══════════════════════════════════════════
+   CONTROL PANEL LOGIC
+═══════════════════════════════════════════ */
+
+let cpOpen = false;
+
+function toggleCP(){
+  cpOpen = !cpOpen;
+  const panel = document.getElementById('control-panel');
+  panel.classList.toggle('open', cpOpen);
+  if(cpOpen) populateCP();
+  icons();
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.cp-tab').forEach(t=> t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.cp-pane').forEach(p=> p.classList.toggle('active', p.id === 'tab-'+tab));
+}
+
+/* ─── Populate panel fields from DATA ─── */
+function populateCP(){
+  /* Identity */
+  document.getElementById('cp-name').value          = DATA.name;
+  document.getElementById('cp-tagline').value        = DATA.tagline;
+  document.getElementById('cp-status').value         = DATA.status;
+  document.getElementById('cp-discord-handle').value = DATA.discord;
+  document.getElementById('cp-discord-url').value    = DATA.socials.discord;
+  document.getElementById('cp-website-url').value    = DATA.socials.website;
+  document.getElementById('cp-roles').value          = (DATA.roles || []).join('\n');
+
+  /* Stats */
+  const sc = document.getElementById('cp-stats-container');
+  sc.innerHTML = '';
+  DATA.stats.forEach((s, i)=>{
+    const row = document.createElement('div');
+    row.className = 'cp-field';
+    row.style.flexDirection = 'column';
+    row.style.alignItems = 'stretch';
+    row.style.gap = '6px';
+    row.innerHTML = `
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:#3f3f46;letter-spacing:.1em">STAT ${i+1}</div>
+      <div style="display:flex;gap:6px">
+        <input class="cp-input" data-stat="${i}" data-key="n"     value="${s.n}"     placeholder="200+" style="width:80px;flex-shrink:0"/>
+        <input class="cp-input" data-stat="${i}" data-key="label" value="${s.label}" placeholder="Bugs Logged"/>
+      </div>`;
+    sc.appendChild(row);
+  });
+
+  /* Skills */
+  renderCPSkills();
+
+  /* Reports */
+  renderCPReports();
+
+  /* Projects */
+  renderCPProjects();
+
+  icons();
+}
+
+/* ─── Skills list ─── */
+function renderCPSkills(){
+  const list = document.getElementById('cp-skills-list');
+  list.innerHTML = '';
+  DATA.expertise.forEach((e, i)=>{
+    const row = document.createElement('div');
+    row.className = 'cp-list-item';
+    row.innerHTML = `
+      <input class="cp-input" data-skill="${i}" value="${e.title}" placeholder="Skill name" style="font-size:.65rem"/>
+      <button class="cp-list-remove" onclick="removeSkill(${i})" title="Remove">
+        <i data-lucide="x" style="width:9px;height:9px"></i>
+      </button>`;
+    list.appendChild(row);
+  });
+  icons();
+}
+
+function addSkill(){
+  DATA.expertise.push({ title: 'New Skill' });
+  renderCPSkills();
+}
+
+function removeSkill(i){
+  DATA.expertise.splice(i, 1);
+  renderCPSkills();
+}
+
+/* ─── Reports list ─── */
+function renderCPReports(){
+  const list = document.getElementById('cp-reports-list');
+  list.innerHTML = '';
+  DATA.reports.forEach((r, i)=>{
+    const row = document.createElement('div');
+    row.style.borderBottom = '1px solid #0f0f11';
+    row.style.padding = '.5rem .875rem';
+    row.style.display = 'flex';
+    row.style.flexDirection = 'column';
+    row.style.gap = '5px';
+    row.innerHTML = `
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:#3f3f46;letter-spacing:.08em;width:70px;flex-shrink:0">LABEL</span>
+        <input class="cp-input" data-report="${i}" data-key="label" value="${r.label}" placeholder="Report name" style="font-size:.63rem"/>
+        <button class="cp-list-remove" onclick="removeReport(${i})" title="Remove" style="flex-shrink:0">
+          <i data-lucide="x" style="width:9px;height:9px"></i>
+        </button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:#3f3f46;letter-spacing:.08em;width:70px;flex-shrink:0">URL</span>
+        <input class="cp-input" data-report="${i}" data-key="href" value="${r.href}" placeholder="https://..." style="font-size:.63rem"/>
+        <select class="cp-select" data-report="${i}" data-key="tag" style="width:64px;flex-shrink:0;font-size:.6rem">
+          ${['PDF','IMG','DOC','LOG','VID'].map(t=>`<option value="${t}" ${r.tag===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>`;
+    list.appendChild(row);
+  });
+  icons();
+}
+
+function addReport(){
+  DATA.reports.push({ label: 'New Report', tag: 'DOC', href: '#' });
+  renderCPReports();
+}
+
+function removeReport(i){
+  DATA.reports.splice(i, 1);
+  renderCPReports();
+}
+
+/* ─── Projects list ─── */
+function renderCPProjects(){
+  const list = document.getElementById('cp-proj-list');
+  list.innerHTML = '';
+  document.getElementById('cp-proj-count').textContent = DATA.projects.length + ' total';
+
+  DATA.projects.forEach((p, i)=>{
+    const item = document.createElement('div');
+    item.className = 'cp-proj-item';
+    item.innerHTML = `
+      <div class="cp-proj-header" onclick="toggleProjExpand(this)">
+        ${p.thumbnail ? `<img class="cp-proj-thumb" src="${p.thumbnail}" onerror="this.style.display='none'"/>` : '<div class="cp-proj-thumb"></div>'}
+        <span class="cp-proj-name">${p.title}</span>
+        <i data-lucide="chevron-down" style="width:11px;height:11px" class="cp-proj-chevron"></i>
+      </div>
+      <div class="cp-proj-fields">
+        <div class="cp-field">
+          <span class="cp-field-label">Title</span>
+          <input class="cp-input" data-proj="${i}" data-key="title" value="${p.title}" style="font-size:.65rem"/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Description</span>
+          <textarea class="cp-input" data-proj="${i}" data-key="desc" rows="2"
+            style="font-size:.63rem;resize:vertical;line-height:1.5">${p.desc||''}</textarea>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Link</span>
+          <input class="cp-input" data-proj="${i}" data-key="link" value="${p.link||''}" placeholder="https://..." style="font-size:.63rem"/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Thumbnail</span>
+          <input class="cp-input" data-proj="${i}" data-key="thumbnail" value="${p.thumbnail||''}" placeholder="https://..." style="font-size:.63rem"/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Tags</span>
+          <input class="cp-input" data-proj="${i}" data-key="tags" value="${(p.tags||[]).join(', ')}" placeholder="Bugs, Feedback, ..." style="font-size:.63rem"/>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Status</span>
+          <select class="cp-select" data-proj="${i}" data-key="status" style="font-size:.63rem">
+            ${['Completed','Ongoing','Deployed','Archived'].map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="cp-field">
+          <span class="cp-field-label">Top Visits</span>
+          <select class="cp-select" data-proj="${i}" data-key="topVisits" style="font-size:.63rem">
+            <option value="" ${p.topVisits!=='yes'?'selected':''}>No</option>
+            <option value="yes" ${p.topVisits==='yes'?'selected':''}>Yes</option>
+          </select>
+        </div>
+        <div class="cp-field" style="justify-content:flex-end;border-top:1px solid #0f0f11;padding-top:.625rem;margin-top:.25rem">
+          <button onclick="removeProject(${i})"
+            style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:#f87171;background:transparent;border:1px solid #2a1010;padding:4px 10px;cursor:pointer;letter-spacing:.08em;transition:background .2s"
+            onmouseover="this.style.background='#1a0808'" onmouseout="this.style.background='transparent'">
+            Remove Project
+          </button>
+        </div>
+      </div>`;
+    list.appendChild(item);
+  });
+  icons();
+}
+
+function toggleProjExpand(header){
+  header.parentElement.classList.toggle('expanded');
+  icons();
+}
+
+function addProject(){
+  const newId = (DATA.projects.reduce((m,p)=>Math.max(m,p.id||0),0)) + 1;
+  DATA.projects.unshift({
+    id: newId, cat: 'QA Testing',
+    title: 'New Project', thumbnail: '',
+    desc: '', tags: ['Bugs','Feedback'],
+    status: 'Completed', link: '#',
+    topVisits: '', reportImg: ''
+  });
+  renderCPProjects();
+}
+
+function removeProject(i){
+  if(!confirm('Remove "' + DATA.projects[i].title + '"?')) return;
+  DATA.projects.splice(i, 1);
+  renderCPProjects();
+}
+
+/* ─── Collect all panel inputs into DATA ─── */
+function collectCP(){
+  /* Identity */
+  const name = document.getElementById('cp-name').value.trim();
+  DATA.name  = name;
+  DATA.short = name;
+  DATA.tagline         = document.getElementById('cp-tagline').value.trim();
+  DATA.status          = document.getElementById('cp-status').value;
+  DATA.discord         = document.getElementById('cp-discord-handle').value.trim();
+  DATA.socials.discord = document.getElementById('cp-discord-url').value.trim();
+  DATA.socials.website = document.getElementById('cp-website-url').value.trim();
+  DATA.roles = document.getElementById('cp-roles').value
+    .split('\n').map(r=>r.trim()).filter(Boolean);
+
+  /* Stats */
+  document.querySelectorAll('[data-stat]').forEach(el=>{
+    const i = +el.dataset.stat;
+    if(DATA.stats[i]) DATA.stats[i][el.dataset.key] = el.value;
+  });
+
+  /* Skills */
+  document.querySelectorAll('[data-skill]').forEach(el=>{
+    const i = +el.dataset.skill;
+    if(DATA.expertise[i]) DATA.expertise[i].title = el.value;
+  });
+
+  /* Reports */
+  document.querySelectorAll('[data-report]').forEach(el=>{
+    const i = +el.dataset.report;
+    if(DATA.reports[i]) DATA.reports[i][el.dataset.key] = el.value;
+  });
+
+  /* Projects */
+  document.querySelectorAll('[data-proj]').forEach(el=>{
+    const i = +el.dataset.proj;
+    if(!DATA.projects[i]) return;
+    const key = el.dataset.key;
+    if(key === 'tags'){
+      DATA.projects[i].tags = el.value.split(',').map(t=>t.trim()).filter(Boolean);
+    } else {
+      DATA.projects[i][key] = el.value;
+    }
+  });
+}
+
+/* ─── Save ─── */
+function cpSave(){
+  collectCP();
+  localStorage.setItem('portfolio_data', JSON.stringify(DATA));
+  renderPage();
+  startTypewriter();
+
+  /* Visual feedback */
+  const btn = document.getElementById('cp-save-btn');
+  btn.classList.add('saved');
+  btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px"></i>Saved!';
+  icons();
+  setTimeout(()=>{
+    btn.classList.remove('saved');
+    btn.innerHTML = '<i data-lucide="save" style="width:12px;height:12px"></i>Apply & Save';
+    icons();
+  }, 1800);
+
+  /* Toast */
+  const toast = document.getElementById('cp-toast');
+  toast.classList.add('show');
+  setTimeout(()=> toast.classList.remove('show'), 2200);
+}
+
+/* ─── Reset to defaults ─── */
+function cpReset(){
+  if(!confirm('Reset all data to defaults? This cannot be undone.')) return;
+  DATA = JSON.parse(JSON.stringify(DATA_DEFAULT));
+  localStorage.removeItem('portfolio_data');
+  renderPage();
+  startTypewriter();
+  populateCP();
+
+  const toast = document.getElementById('cp-toast');
+  toast.textContent = 'RESET_TO_DEFAULTS';
+  toast.classList.add('show');
+  setTimeout(()=>{ toast.classList.remove('show'); toast.textContent = 'CHANGES_SAVED'; }, 2200);
+}
+
+/* Close panel on outside click */
+document.addEventListener('click', e=>{
+  const panel = document.getElementById('control-panel');
+  const trigger = document.getElementById('cp-trigger');
+  if(cpOpen && panel && !panel.contains(e.target) && !trigger.contains(e.target)){
+    cpOpen = false;
+    panel.classList.remove('open');
+  }
+});
+
+/* ── Boot ── */
+renderPage();
+startTypewriter();
+icons();
+observeAll();
+</script>
+</body>
+</html>      status:    "Completed",
       link:      "https://www.roblox.com/games/80860272693373/HATCH-A-BRAINROT#!/game-instances",
       topVisits: "",
       reportImg: ""
