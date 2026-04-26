@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Respawn — QA Lead Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="icon" type="image/svg+xml" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/bug.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -11,7 +12,7 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
 <style>
-/* ── Reset ── */
+/* ── Reset & Theme ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
@@ -20,1425 +21,233 @@ body{
   font-family:'Inter',sans-serif;
   overflow-x:hidden;
 }
-::selection{background:rgba(0,212,255,.18);color:#00d4ff}
+::selection{background:rgba(249,115,22,.2);color:#f97316}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:#09090b}
 ::-webkit-scrollbar-thumb{background:#27272a}
 
-/* ── Grain texture ── */
-body::before{
-  content:'';
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  opacity:.55;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-repeat:repeat;
-  background-size:200px;
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Utilities ── */
+.glass-panel {
+  background: #121214;
+  border: 1px solid #27272a;
+  transition: border-color 0.3s ease;
+}
+.glass-panel:hover { border-color: #3f3f46; }
+
+.project-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.project-card.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* ── Scanline grid ── */
-.grid-bg{
-  background-image:
-    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
-  background-size:64px 64px;
+.filter-btn.active {
+  background: #f97316;
+  color: #fff;
+  border-color: #f97316;
 }
-
-/* ── CSS Vars ── */
-:root{
-  --cyan:#00d4ff;
-  --blue:#3b82f6;
-  --zinc-900:#18181b;
-  --zinc-800:#27272a;
-  --zinc-700:#3f3f46;
-  --zinc-400:#a1a1aa;
-  --zinc-300:#d4d4d8;
-  --border:1px solid #27272a;
-}
-
-/* ── Typography ── */
-.mono{font-family:'JetBrains Mono',monospace}
-.inter{font-family:'Inter',sans-serif}
-
-/* ── Utility ── */
-.grad-cyan{background:linear-gradient(135deg,#00d4ff,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.grad-white{background:linear-gradient(160deg,#fff 40%,rgba(255,255,255,.35));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.divider{height:1px;background:#27272a}
-.sharp{border-radius:0!important}
-
-/* ── Navbar ── */
-#navbar{
-  position:fixed;top:0;left:0;right:0;z-index:50;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:.875rem 1.75rem;
-  border-bottom:1px solid transparent;
-  transition:background .3s,border-color .3s;
-}
-#navbar.scrolled{
-  background:rgba(9,9,11,.92);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid #27272a;
-}
-
-.nav-logo{
-  display:flex;align-items:center;gap:10px;text-decoration:none;
-}
-.nav-logo-box{
-  width:30px;height:30px;
-  background:#00d4ff;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.nav-name{
-  font-family:'Inter',sans-serif;
-  font-weight:800;
-  font-size:1rem;
-  color:#fff;
-  letter-spacing:-.02em;
-}
-.nav-links{
-  display:flex;align-items:center;gap:2rem;
-}
-.nav-link{
-  font-family:'Inter',sans-serif;
-  font-size:.8rem;
-  font-weight:500;
-  color:var(--zinc-400);
-  text-decoration:none;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  transition:color .2s;
-}
-.nav-link:hover{color:#fff}
-.nav-discord{
-  display:flex;align-items:center;gap:7px;
-  padding:.4rem .9rem;
-  background:#00d4ff;
-  font-family:'Inter',sans-serif;
-  font-size:.75rem;
-  font-weight:700;
-  color:#000;
-  text-decoration:none;
-  letter-spacing:.04em;
-  transition:background .2s,transform .15s;
-}
-.nav-discord:hover{background:#33dcff;transform:translateY(-1px)}
-
-/* ── Mobile menu ── */
-#hamburger{
-  display:none;
-  width:34px;height:34px;
-  align-items:center;justify-content:center;
-  background:transparent;
-  border:1px solid #27272a;
-  cursor:pointer;
-  color:#fff;
-}
-#mobile-menu{
-  display:none;
-  position:fixed;top:57px;left:0;right:0;z-index:45;
-  background:#09090b;
-  border-bottom:1px solid #27272a;
-  padding:1rem 1.75rem;
-  flex-direction:column;gap:.75rem;
-}
-#mobile-menu.open{display:flex}
-@media(max-width:768px){
-  #hamburger{display:flex}
-  .nav-links{display:none}
-  .nav-discord-label{display:none}
-}
-
-/* ── Hero ── */
-#hero{
-  position:relative;
-  min-height:100vh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  overflow:hidden;
-  padding:0 1.75rem;
-}
-
-.hero-accent-line{
-  position:absolute;
-  top:0;left:50%;
-  width:1px;height:100%;
-  background:linear-gradient(180deg,transparent,rgba(0,212,255,.15) 40%,transparent);
-  pointer-events:none;
-}
-.hero-corner{
-  position:absolute;
-  width:60px;height:60px;
-  pointer-events:none;
-  opacity:.4;
-}
-.hero-corner.tl{top:6rem;left:2rem;border-top:1px solid var(--cyan);border-left:1px solid var(--cyan)}
-.hero-corner.tr{top:6rem;right:2rem;border-top:1px solid var(--cyan);border-right:1px solid var(--cyan)}
-.hero-corner.bl{bottom:4rem;left:2rem;border-bottom:1px solid var(--cyan);border-left:1px solid var(--cyan)}
-.hero-corner.br{bottom:4rem;right:2rem;border-bottom:1px solid var(--cyan);border-right:1px solid var(--cyan)}
-
-.hero-glow{
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-60%);
-  width:min(600px,120vw);height:min(600px,120vw);
-  background:radial-gradient(circle,rgba(0,212,255,.08) 0%,transparent 70%);
-  pointer-events:none;
-}
-
-.hero-inner{
-  position:relative;z-index:10;
-  display:flex;flex-direction:column;
-  align-items:center;text-align:center;
-  max-width:60rem;width:100%;
-}
-
-.status-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:.3rem .875rem;
-  border:1px solid #27272a;
-  margin-bottom:2rem;
-  background:#18181b;
-}
-.status-badge .mono{font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-
-.hero-eyebrow{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.7rem;
-  font-weight:500;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:var(--cyan);
-  margin-bottom:1.25rem;
-}
-
-.hero-name{
-  font-family:'Inter',sans-serif;
-  font-weight:900;
-  font-size:clamp(4.5rem,14vw,10rem);
-  line-height:.9;
-  letter-spacing:-.04em;
-  margin-bottom:1.25rem;
-}
-
-.hero-roles{
-  display:flex;align-items:center;gap:6px;
-  margin-bottom:1.5rem;
-  min-height:2rem;
-}
-.hero-roles .mono{
-  font-size:clamp(.9rem,2.5vw,1.25rem);
-  font-weight:500;
-  color:var(--cyan);
-}
-
-.hero-tagline{
-  font-size:1rem;
-  color:var(--zinc-400);
-  font-weight:400;
-  max-width:28rem;
-  margin-bottom:2.75rem;
-  letter-spacing:.01em;
-  line-height:1.6;
-}
-
-.hero-cta{
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem;
-}
-.btn-primary{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:.75rem 1.75rem;
-  background:#00d4ff;
-  color:#000;
-  font-family:'Inter',sans-serif;
-  font-size:.8rem;font-weight:700;
-  letter-spacing:.04em;text-transform:uppercase;
-  text-decoration:none;
-  transition:background .2s,transform .15s;
-}
-.btn-primary:hover{background:#33dcff;transform:translateY(-2px)}
-.btn-secondary{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:.75rem 1.75rem;
-  background:transparent;
-  border:1px solid #3f3f46;
-  color:var(--zinc-300);
-  font-family:'Inter',sans-serif;
-  font-size:.8rem;font-weight:700;
-  letter-spacing:.04em;text-transform:uppercase;
-  text-decoration:none;
-  transition:border-color .2s,color .2s,transform .15s;
-}
-.btn-secondary:hover{border-color:#71717a;color:#fff;transform:translateY(-2px)}
-
-.cursor{
-  display:inline-block;width:2px;height:1.1em;
-  background:var(--cyan);
-  vertical-align:middle;margin-left:3px;
-  animation:blink 1s step-end infinite;
-}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-.scroll-hint{
-  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-}
-.scroll-hint .mono{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#3f3f46}
-.scroll-line{width:1px;height:40px;background:linear-gradient(180deg,#3f3f46,transparent)}
-
-/* ── Stats Strip ── */
-#stats-section{
-  border-top:1px solid #27272a;
-  border-bottom:1px solid #27272a;
-  background:#0f0f11;
-}
-.stats-inner{
-  max-width:80rem;margin:0 auto;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-}
-.stat-cell{
-  padding:2rem 2.5rem;
-  border-right:1px solid #27272a;
-  display:flex;flex-direction:column;align-items:center;
-  text-align:center;
-  gap:6px;
-  position:relative;
-}
-.stat-cell:last-child{border-right:none}
-.stat-num{
-  font-family:'JetBrains Mono',monospace;
-  font-size:clamp(2rem,4vw,2.75rem);
-  font-weight:700;
-  color:#fff;
-  letter-spacing:-.03em;
-  line-height:1;
-}
-.stat-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.6rem;
-  font-weight:500;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:#52525b;
-}
-.stat-accent{
-  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:2rem;height:2px;
-  background:var(--cyan);
-  opacity:0;
-  transition:opacity .3s;
-}
-.stat-cell:hover .stat-accent{opacity:1}
-.stat-cell:hover .stat-num{color:var(--cyan)}
-.stat-num{transition:color .3s}
-
-@media(max-width:640px){
-  .stats-inner{grid-template-columns:1fr}
-  .stat-cell{border-right:none;border-bottom:1px solid #27272a}
-  .stat-cell:last-child{border-bottom:none}
-}
-
-/* ── Evidence & Expertise Triple-Column ── */
-#evidence-section{
-  border-top:1px solid #27272a;
-  padding:5rem 1.75rem;
-}
-#evidence-section-inner{
-  max-width:80rem;margin:0 auto;
-}
-.evidence-header{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:2.5rem;gap:2rem;
-  flex-wrap:wrap;
-}
-.section-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.6rem;
-  font-weight:600;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  color:var(--cyan);
-  margin-bottom:.6rem;
-}
-.section-title{
-  font-family:'Inter',sans-serif;
-  font-weight:800;
-  font-size:clamp(1.5rem,3vw,2rem);
-  color:#fff;
-  letter-spacing:-.025em;
-  line-height:1.1;
-}
-
-.triple-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-  border:1px solid #27272a;
-  align-items:start;
-}
-@media(max-width:700px){
-  .triple-grid{grid-template-columns:1fr}
-}
-
-.triple-col{
-  padding:1.75rem 2rem;
-  border-right:1px solid #27272a;
-  background:#09090b;
-  position:relative;
-}
-.triple-col:last-child{border-right:none}
-@media(max-width:700px){
-  .triple-col{border-right:none;border-bottom:1px solid #27272a}
-  .triple-col:last-child{border-bottom:none}
-}
-
-.col-header{
-  display:flex;align-items:center;gap:8px;
-  padding-bottom:1rem;
-  border-bottom:1px solid #27272a;
-  margin-bottom:1.25rem;
-}
-.col-icon{
-  width:20px;height:20px;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-  opacity:.45;
-}
-.col-title{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.62rem;
-  font-weight:700;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  color:#52525b;
-}
-
-/* Expertise list */
-.expertise-list{
-  display:flex;flex-direction:column;gap:0;
-}
-.expertise-item{
-  display:flex;align-items:center;gap:12px;
-  padding:.625rem 0;
-  border-bottom:1px solid #18181b;
-  cursor:default;
-}
-.expertise-item:last-child{border-bottom:none}
-.expertise-bullet{
-  width:4px;height:4px;
-  background:var(--cyan);
-  flex-shrink:0;
-}
-.expertise-text{
-  font-family:'Inter',sans-serif;
-  font-size:.82rem;
-  font-weight:500;
-  color:#71717a;
-  line-height:1.4;
-  transition:color .2s;
-}
-.expertise-item:hover .expertise-text{color:var(--zinc-300)}
-
-/* Report evidence — terminal file list */
-.report-list{
-  display:flex;flex-direction:column;gap:0;
-}
-.report-btn{
-  display:flex;align-items:center;gap:10px;
-  padding:.55rem 0;
-  border-bottom:1px solid #18181b;
-  background:transparent;
-  color:#52525b;
-  text-decoration:none;
-  font-family:'JetBrains Mono',monospace;
-  font-size:.72rem;
-  font-weight:500;
-  cursor:pointer;
-  transition:color .18s;
-  position:relative;
-}
-.report-btn:last-child{border-bottom:none}
-.report-btn:hover{color:var(--zinc-300)}
-.report-btn:hover .report-row-icon{color:var(--cyan)}
-.report-row-icon{
-  flex-shrink:0;
-  transition:color .18s;
-  color:#3f3f46;
-}
-.report-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.report-tag{
-  font-size:.55rem;
-  padding:1px 5px;
-  border:1px solid #27272a;
-  color:#3f3f46;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  flex-shrink:0;
-  transition:border-color .18s,color .18s;
-}
-.report-btn:hover .report-tag{border-color:#3f3f46;color:#71717a}
-
-/* ── Projects ── */
-#projects-section{
-  border-top:1px solid #27272a;
-  padding:5rem 1.75rem;
-}
-.projects-inner{max-width:80rem;margin:0 auto}
-
-.filter-bar{
-  display:flex;align-items:center;gap:0;
-  margin-bottom:2.5rem;
-  border:1px solid #27272a;
-  width:fit-content;
-}
-.filter-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:.5rem 1.25rem;
-  font-family:'JetBrains Mono',monospace;
-  font-size:.7rem;
-  font-weight:600;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  color:#71717a;
-  border:none;
-  background:transparent;
-  cursor:pointer;
-  border-right:1px solid #27272a;
-  transition:background .2s,color .2s;
-}
-.filter-btn:last-child{border-right:none}
-.filter-btn:hover{background:#18181b;color:#a1a1aa}
-.filter-btn.active{
-  background:#00d4ff;
-  color:#000;
-  font-weight:700;
-}
-.filter-btn.active:hover{background:#00d4ff;color:#000}
-
-#project-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-  gap:1px;
-  background:#27272a;
-  align-items:start;
-}
-
-.proj-card{
-  background:#09090b;
-  display:flex;
-  flex-direction:column;
-  height:auto;
-  transition:background .25s;
-  cursor:default;
-  position:relative;
-}
-.proj-card:hover{background:#0f0f11}
-
-.card-accent-bar{
-  height:2px;
-  background:var(--cyan);
-  opacity:0;
-  transition:opacity .25s;
-}
-.proj-card:hover .card-accent-bar{opacity:1}
-
-.card-thumb{
-  width:100%;
-  height:180px;
-  overflow:hidden;
-  flex-shrink:0;
-  position:relative;
-}
-.card-thumb img{
-  width:100%;height:100%;
-  object-fit:cover;
-  display:block;
-  transition:transform .5s cubic-bezier(.22,1,.36,1),filter .3s;
-  filter:grayscale(20%)brightness(.9);
-}
-.proj-card:hover .card-thumb img{transform:scale(1.06);filter:grayscale(0%)brightness(1)}
-.card-thumb-placeholder{
-  width:100%;height:100%;
-  display:flex;align-items:center;justify-content:center;
-  background:#18181b;
-}
-
-.card-body{
-  padding:1.25rem;
-  display:flex;flex-direction:column;
-  flex:1;
-}
-.card-meta{
-  display:flex;align-items:center;
-  margin-bottom:.75rem;
-}
-.card-status{
-  display:flex;align-items:center;gap:5px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:.6rem;
-  font-weight:500;
-  color:#52525b;
-  letter-spacing:.05em;
-}
-.status-dot{
-  width:5px;height:5px;
-  background:#27272a;
-  flex-shrink:0;
-}
-.status-dot.active{
-  background:#3b82f6;
-  box-shadow:0 0 6px rgba(59,130,246,.7);
-}
-
-.card-title{
-  font-family:'Inter',sans-serif;
-  font-weight:700;
-  font-size:.95rem;
-  color:#fff;
-  letter-spacing:-.015em;
-  line-height:1.3;
-  margin-bottom:.5rem;
-}
-.card-desc{
-  font-size:.78rem;
-  color:#52525b;
-  line-height:1.6;
-  margin-bottom:1rem;
-  flex:1;
-}
-.card-desc:empty{margin-bottom:.5rem}
-
-.card-tags{
-  display:flex;flex-wrap:wrap;
-  gap:4px;
-  margin-bottom:1rem;
-}
-.card-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.6rem;
-  font-weight:500;
-  padding:3px 8px;
-  border:1px solid #27272a;
-  color:#52525b;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  transition:border-color .2s,color .2s;
-}
-.proj-card:hover .card-tag{border-color:#3f3f46;color:#71717a}
-
-.card-footer{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-top:.875rem;
-  border-top:1px solid #18181b;
-  margin-top:auto;
-}
-.card-link{
-  display:inline-flex;align-items:center;gap:6px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:.65rem;
-  font-weight:600;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:#3f3f46;
-  text-decoration:none;
-  transition:color .2s,gap .2s;
-}
-.card-link:hover{color:var(--cyan);gap:9px}
-.top-visit-badge{
-  position:absolute;top:.75rem;right:.75rem;
-  font-family:'JetBrains Mono',monospace;
-  font-size:.55rem;
-  font-weight:700;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  padding:3px 8px;
-  background:#09090b;
-  border:1px solid #27272a;
-  color:#52525b;
-  z-index:5;
-}
-
-/* ── Contact / Footer ── */
-#contact{
-  border-top:1px solid #27272a;
-  padding:5rem 1.75rem;
-}
-.contact-inner{
-  max-width:80rem;margin:0 auto;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:4rem;
-  align-items:start;
-}
-@media(max-width:768px){
-  .contact-inner{grid-template-columns:1fr;gap:3rem}
-}
-
-.contact-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.6rem;font-weight:600;
-  letter-spacing:.18em;text-transform:uppercase;
-  color:var(--cyan);margin-bottom:.875rem;
-}
-.contact-title{
-  font-family:'Inter',sans-serif;
-  font-weight:800;
-  font-size:clamp(2rem,4vw,3rem);
-  color:#fff;
-  letter-spacing:-.03em;
-  line-height:1;
-  margin-bottom:1.75rem;
-}
-.discord-btn{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:.875rem 1.75rem;
-  background:#00d4ff;
-  color:#000;
-  font-family:'Inter',sans-serif;
-  font-size:.8rem;font-weight:700;
-  letter-spacing:.04em;text-transform:uppercase;
-  text-decoration:none;
-  transition:background .2s,transform .15s;
-}
-.discord-btn:hover{background:#33dcff;transform:translateY(-2px)}
-
-.contact-meta{
-  display:flex;flex-direction:column;gap:1.5rem;
-}
-.meta-block{
-  border:1px solid #27272a;
-  padding:1.25rem;
-}
-.meta-block-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.55rem;font-weight:600;
-  letter-spacing:.16em;text-transform:uppercase;
-  color:#3f3f46;margin-bottom:.5rem;
-}
-.meta-block-val{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.85rem;font-weight:600;
-  color:var(--zinc-300);
-}
-.meta-block-val.available{color:var(--cyan)}
-
-.footer-bottom{
-  max-width:80rem;margin:3rem auto 0;
-  padding-top:2rem;
-  border-top:1px solid #18181b;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:1rem;
-}
-.footer-cr{
-  font-family:'JetBrains Mono',monospace;
-  font-size:.6rem;
-  color:#27272a;
-  letter-spacing:.06em;
-}
-.social-links{display:flex;gap:.5rem}
-.social-btn{
-  width:36px;height:36px;
-  border:1px solid #27272a;
-  display:flex;align-items:center;justify-content:center;
-  text-decoration:none;
-  transition:border-color .2s,background .2s;
-}
-.social-btn:hover{border-color:#3f3f46;background:#18181b}
-
-/* ── Lightbox ── */
-.lightbox{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.96);
-  z-index:100;
-  align-items:center;justify-content:center;
-  backdrop-filter:blur(8px);
-}
-.lightbox.active{display:flex}
-.lightbox-content{position:relative;max-width:90vw;max-height:90vh}
-.lightbox-img{width:100%;height:100%;object-fit:contain}
-.lightbox-close{
-  position:absolute;top:-40px;right:0;
-  width:32px;height:32px;
-  border:1px solid #27272a;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  color:#71717a;
-  background:#09090b;
-  transition:color .2s,border-color .2s;
-}
-.lightbox-close:hover{color:#fff;border-color:#71717a}
-
-/* ── Animations ── */
-.fade-up{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s cubic-bezier(.22,1,.36,1)}
-.fade-up.visible{opacity:1;transform:translateY(0)}
-.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}
-.d4{transition-delay:.28s}.d5{transition-delay:.35s}.d6{transition-delay:.42s}
-.d7{transition-delay:.49s}.d8{transition-delay:.56s}.d9{transition-delay:.63s}
-
-@keyframes scrollpulse{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.3;transform:scaleY(.5)}}
-.scroll-line{animation:scrollpulse 2s ease-in-out infinite}
 </style>
 </head>
+
 <body>
 
-<!-- ════════════════════ DATA ════════════════════ -->
+<main class="min-h-screen">
+  <header class="max-w-6xl mx-auto px-6 pt-24 pb-12">
+    <div class="flex flex-col gap-2 mb-8">
+      <span class="font-mono text-orange-500 text-xs tracking-[0.3em] uppercase">Status: Available for Hire</span>
+      <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter text-white">RESPAWN<span class="text-orange-500">.</span></h1>
+      <p class="text-zinc-500 max-w-md text-sm font-medium leading-relaxed">
+        Lead QA Tester specializing in gameplay balance, technical bug reporting, and stress-testing for high-traffic experiences.
+      </p>
+    </div>
+
+    <div id="stats-row" class="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-zinc-800/50">
+      </div>
+  </header>
+
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+      
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] tracking-widest uppercase text-zinc-500">_Expertise</h3>
+        <div class="glass-panel p-6 space-y-3">
+          <ul class="space-y-3 text-sm text-zinc-400 font-mono">
+            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> Regression Testing</li>
+            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> Bug Documentation</li>
+            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> Stress Testing</li>
+            <li class="flex items-center gap-2"><span class="text-orange-500">/</span> API Validation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] tracking-widest uppercase text-zinc-500">_Evidence</h3>
+        <div class="glass-panel p-6">
+          <div class="space-y-2">
+            <a href="#" target="_blank" class="flex items-center justify-between group p-3 bg-zinc-900/50 border border-zinc-800 hover:border-orange-500 transition-all">
+              <span class="text-[10px] font-mono uppercase tracking-tight">Full Audit: Fast Food Sim</span>
+              <i data-lucide="arrow-up-right" class="w-3 h-3 text-zinc-600 group-hover:text-orange-500"></i>
+            </a>
+            <a href="#" target="_blank" class="flex items-center justify-between group p-3 bg-zinc-900/50 border border-zinc-800 hover:border-orange-500 transition-all">
+              <span class="text-[10px] font-mono uppercase tracking-tight">Standard Bug Template</span>
+              <i data-lucide="arrow-up-right" class="w-3 h-3 text-zinc-600 group-hover:text-orange-500"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="font-mono text-[10px] tracking-widest uppercase text-zinc-500">_Stack</h3>
+        <div class="glass-panel p-6">
+          <div class="flex flex-wrap gap-2">
+            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">SOBER</span>
+            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">FIDDLER</span>
+            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">POSTMAN</span>
+            <span class="px-2 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-400">ROBLOX STUDIO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-6">
+    <div class="flex gap-4 border-b border-zinc-800/50 pb-4">
+      <button onclick="filterProjects('qa')" data-f="qa" class="filter-btn active font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-zinc-800 transition-all">QA Testing</button>
+      <button onclick="filterProjects('top')" data-f="top" class="filter-btn font-mono text-[10px] uppercase tracking-widest px-4 py-2 border border-zinc-800 transition-all">Top Visits</button>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      </div>
+  </section>
+
+  <footer class="max-w-6xl mx-auto px-6 py-24 border-t border-zinc-800/50 flex justify-between items-center">
+    <div class="font-mono text-[10px] text-zinc-600 uppercase">© 2026 RESPAWN_QA</div>
+    <div id="social-row" class="flex gap-4"></div>
+  </footer>
+</main>
+
 <script>
+/* ── DATA CONTROL PANEL ── */
 const DATA = {
-  name:    "Respawn",
-  short:   "Respawn",
-  title:   "QA Tester & Bug Hunter",
-  tagline: "Breaking games before players do.",
-  status:  "Available",
-  discord: "vishnu404",
-  roles:   ["QA Tester.", "Bug Hunter.", "Test Strategist.", "Quality Advocate."],
   socials: {
-    discord: "https://discord.com/users/1421362764483530902",
+    discord: "https://discord.com/users/YOUR_USER_ID", // Replace with your ID
     website: "#"
   },
   stats: [
-    { n:"200+", label:"Bugs Logged"        },
-    { n:"15+",  label:"Games Tested"       },
-    { n:"70M+", label:"Visits Contributed" }
-  ],
-  expertise: [
-    { title:"Regression Testing",      sub:"Patch validation & fix verification" },
-    { title:"API Validation",          sub:"Endpoint response & payload testing" },
-    { title:"Bug Reporting",           sub:"Repro steps, severity, visual evidence" },
-    { title:"Exploit Detection",       sub:"Edge cases, exploits, security gaps" },
-    { title:"Performance Benchmarking",sub:"FPS profiling & load stress testing" },
-    { title:"UX / UI Feedback",        sub:"Player perspective & accessibility" },
-    { title:"Balance Analysis",        sub:"Economy, progression & difficulty curves" },
-    { title:"Documentation",           sub:"Structured QA docs & issue tracking" }
-  ],
-  reports: [
-    { label:"Full Audit — Depth Fishing", tag:"PDF",  href:"https://ibb.co/JFC395Qg" },
-    { label:"Bug Report — Camo Or Snipe", tag:"IMG",  href:"https://ibb.co/nswmWL6r" },
-    { label:"Bug Report Template",        tag:"DOC",  href:"#" },
-    { label:"UX Feedback — Donate or Skip",tag:"IMG", href:"#" },
-    { label:"Regression Log — My Gym",    tag:"LOG",  href:"#" }
-  ],
-  stack: [
-    { name:"Roblox Studio", cat:"Platform"   },
-    { name:"Postman",       cat:"API Tools"  },
-    { name:"Fiddler",       cat:"Network"    },
-    { name:"Sober",         cat:"Emulation"  },
-    { name:"Discord",       cat:"Reporting"  },
-    { name:"OBS Studio",    cat:"Capture"    },
-    { name:"Gyazo",         cat:"Evidence"   },
-    { name:"Notion",        cat:"Docs"       }
+    { n: "120M+", label: "Total Visits" },
+    { n: "15+",   label: "Projects" },
+    { n: "200+",  label: "Bugs Found" },
+    { n: "99%",   label: "Client Rate" }
   ],
   projects: [
     {
-      id: 16,
-      cat:       "QA Testing",
-      title:     "Depth Fishing! 🦈",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-2d1cb5d416599c76c6c924926a09a701/768/432/Image/Webp/noFilter",
-      desc:      "",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/100883017932998/Depth-Fishing",
+      id: 1,
+      title: "Fast Food Simulator",
       topVisits: "yes",
-      reportImg: "https://ibb.co/JFC395Qg"
-    },
-    {
-      id: 15,
-      cat:       "QA Testing",
-      title:     "Push a Luckyblock",
-      thumbnail: "https://t5.rbxcdn.com/180DAY-2d1bce8a7bbdcdd0e6dc378c7b6f566c",
-      desc:      "",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/93956644497252/Push-a-Luckyblock",
-      topVisits: "yes",
-      reportImg: ""
-    },
-    {
-      id: 14,
-      cat:       "QA Testing",
-      title:     "Police Response: 911",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-d0d06d6a34e6e9b0bb3f0e6abc7ad655/768/432/Image/Webp/noFilter",
-      desc:      "The dev asked for Suggestions,feedback,bugs,balancing, And i provided them all in one clear report.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/132543027833614/Police-Response-911",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 13,
-      cat:       "QA Testing",
-      title:     "Camo or Snipe",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-e9b38a62b7fc3d8d0f9e87c32cbf8af6/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/125700405216363/Camo-Or-Snipe",
-      topVisits: "",
-      reportImg: "https://ibb.co/nswmWL6r"
-    },
-    {
-      id: 12,
-      cat:       "QA Testing",
-      title:     "HATCH A BRAINROT",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-116fb2b13aa8457d4be79f5c4ba650f5/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/80860272693373/HATCH-A-BRAINROT#!/game-instances",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 11,
-      cat:       "QA Testing",
-      title:     "REEFMØURN",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-0ca5592516632e42a88f2f07e3726be3/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/93998278396472/REEFM-URN",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 10,
-      cat:       "QA Testing",
-      title:     "Break Sea For Brainrot",
-      thumbnail: "https://images-ext-1.discordapp.net/external/wcz13wFy-6pqdHEeuLc9SS8K-GVsn8Zk5sAHcuBLdk0/https/tr.rbxcdn.com/180DAY-d5d4a71ea58a844c647aa8394b33ef56/500/280/Image/Jpeg/noFilter?format=webp&quality=lossless&width=640&height=360",
-      desc:      "Gave the dev reports of bugs, suggestions, feedback, and balancing notes.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/94598190739254/Break-the-Sea-for-Brainrots",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 9,
-      cat:       "QA Testing",
-      title:     "Unbox A Drill",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-e86c96fe134fe2e12f30a17ffa338c9e/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev reports of unique & major bugs, suggestions, feedback, and balancing notes.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/72180956157491/Unbox-a-Drill",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 8,
-      cat:       "QA Testing",
-      title:     "Dropper Miners",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-0eb8e76ccb4478561919687e57105705/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev my reports of bugs, suggestions, feedback, and balancing.",
-      tags:      ["Bugs", "Feedback", "Suggestions", "Balancing"],
-      status:    "Completed",
-      link:      "https://roblox.com/games/83840551790663/Dropper-Miners#!/game-instances",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 7,
-      cat:       "QA Testing",
-      title:     "Fast Food Simulator",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-807bfe0d079ac809222020573952b620/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev my reports of bugs, suggestions, feedback, and balancing.",
-      tags:      ["Bugs", "Suggestions", "Feedback", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/119055906651998/Fast-Food-Simulator",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 6,
-      cat:       "QA Testing",
-      title:     "Spin a Anime Card",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-385154356aecb9d4005b77effb38e7af/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev team a complete report on bugs, glitches, feedback, suggestions, and balancing.",
-      tags:      ["Bugs", "Feedback", "Suggestions", "Balancing"],
-      status:    "Completed",
-      link:      "https://roblox.com/games/126582592441662/Spin-a-Anime-Card",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 5,
-      cat:       "QA Testing",
-      title:     "Noob Tower Defense",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-c5428c865c8af1e89fc0bb837e97f827/768/432/Image/Webp/noFilter",
-      desc:      "Gave a complete report covering bugs, what to add/remove, suggestions, and feedback.",
-      tags:      ["Bugs", "Feedback", "Suggestions"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/127758462685845/Noob-Tower-Defense",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 4,
-      cat:       "QA Testing",
-      title:     "Donate or Skip",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-f0a264368ff8d43e3b89dc711acb5d8b/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev suggestions for improvements on lighting, environment, UI/UX, SFX, and more, plus bug reports.",
-      tags:      ["Bugs", "Feedback", "Suggestions", "Improvements"],
-      status:    "Completed",
-      link:      "https://roblox.com/games/129106858508294/Donate-or-Skip",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 3,
-      cat:       "QA Testing",
-      title:     "Dig Dirt For Brainrot",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-d217bd08b26f2639836813c4b60dbab7/768/432/Image/Webp/noFilter",
-      desc:      "Found major game-breaking bugs and gave valuable feedback and suggestions to the devs.",
-      tags:      ["Bugs", "Feedback", "Suggestions", "Balancing"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/96062605574136/Dig-Dirt-for-Brainrot",
-      topVisits: "",
-      reportImg: ""
+      tags: ["Stress Testing", "Logic"],
+      desc: "Documented critical exploits and stress-tested server capacity during peak events.",
+      stats: "50M+ Visits",
+      img: "https://images.unsplash.com/photo-1556742044-3c52d6e88c02?auto=format&fit=crop&q=80&w=800"
     },
     {
       id: 2,
-      cat:       "QA Testing",
-      title:     "My Gym",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-88e81fc05032e4446531557365de2a74/768/432/Image/Webp/noFilter",
-      desc:      "Gave the dev team a thorough report of bugs, feedback, and suggestions for the game.",
-      tags:      ["Bug Reports", "Performance", "Feedback", "Suggestions"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/76163423410722/My-Gym",
-      topVisits: "",
-      reportImg: ""
-    },
-    {
-      id: 1,
-      cat:       "QA Testing",
-      title:     "Paper Plane Race",
-      thumbnail: "https://tr.rbxcdn.com/180DAY-dbd093caa70cde7b945186cc855d0914/768/432/Image/Webp/noFilter",
-      desc:      "Conducted a thorough QA pass — documenting bugs, edge cases, and delivering structured suggestions and feedback to the dev team.",
-      tags:      ["Bug Reports", "Suggestions", "Feedback"],
-      status:    "Completed",
-      link:      "https://www.roblox.com/games/88154180827048/Paper-Plane-Race",
-      topVisits: "",
-      reportImg: ""
+      title: "Camo or Snipe",
+      topVisits: "yes",
+      tags: ["Balancing", "UI/UX"],
+      desc: "Balanced weapon drop rates and performed regression testing on map updates.",
+      stats: "30M+ Visits",
+      img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800"
     }
   ]
 };
-</script>
 
-<!-- ════════════════════ NAVBAR ════════════════════ -->
-<nav id="navbar">
-  <a href="#hero" class="nav-logo">
-    <div class="nav-logo-box">
-      <i data-lucide="bug" style="width:14px;height:14px;color:#000;stroke-width:2.5"></i>
-    </div>
-    <span class="nav-name" id="nav-name"></span>
-  </a>
+function icons() { lucide.createIcons(); }
 
-  <div class="nav-links">
-    <a href="#projects-section" class="nav-link">Projects</a>
-    <a href="#evidence-section" class="nav-link">Expertise</a>
-    <a href="#contact" class="nav-link">Contact</a>
-  </div>
-
-  <div style="display:flex;align-items:center;gap:.75rem">
-    <a href="" id="nav-discord-link" target="_blank" rel="noreferrer" class="nav-discord">
-      <i data-lucide="message-square" style="width:13px;height:13px;flex-shrink:0"></i>
-      <span class="nav-discord-label" id="nav-label"></span>
-    </a>
-    <button onclick="toggleMenu()" id="hamburger">
-      <i data-lucide="menu" style="width:15px;height:15px"></i>
-    </button>
-  </div>
-</nav>
-
-<!-- Mobile menu -->
-<div id="mobile-menu">
-  <a href="#projects-section" onclick="toggleMenu()" class="nav-link" style="font-size:.85rem">Projects</a>
-  <a href="#evidence-section" onclick="toggleMenu()" class="nav-link" style="font-size:.85rem">Expertise</a>
-  <a href="#contact" onclick="toggleMenu()" class="nav-link" style="font-size:.85rem">Contact</a>
-</div>
-
-<!-- ════════════════════ HERO ════════════════════ -->
-<section id="hero" class="grid-bg">
-  <div class="hero-glow"></div>
-  <div class="hero-accent-line"></div>
-  <div class="hero-corner tl"></div>
-  <div class="hero-corner tr"></div>
-  <div class="hero-corner bl"></div>
-  <div class="hero-corner br"></div>
-
-  <div class="hero-inner">
-    <div id="hero-badge" class="status-badge fade-up visible">
-      <div style="width:6px;height:6px;background:#00d4ff;animation:livepulse 1.8s ease-in-out infinite;flex-shrink:0"></div>
-      <span class="mono" style="color:#00d4ff" id="hero-badge-text"></span>
-    </div>
-
-    <div class="hero-eyebrow fade-up visible d1">QA Lead Portfolio — Roblox Games</div>
-
-    <h1 class="hero-name grad-white fade-up visible d2" id="hero-name"></h1>
-
-    <div class="hero-roles fade-up visible d3">
-      <span class="mono" id="typewriter-text"></span>
-      <span class="cursor"></span>
-    </div>
-
-    <p class="hero-tagline fade-up visible d4" id="hero-tagline"></p>
-
-    <div class="hero-cta fade-up visible d5">
-      <a href="#projects-section" class="btn-primary">
-        <i data-lucide="bug" style="width:14px;height:14px"></i>
-        View Projects
-      </a>
-      <a href="#contact" class="btn-secondary">
-        Get In Touch
-        <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
-      </a>
-    </div>
-  </div>
-
-  <div class="scroll-hint fade-up visible d6">
-    <div class="scroll-line"></div>
-    <span class="mono">scroll</span>
-  </div>
-</section>
-
-<!-- ════════════════════ STATS ════════════════════ -->
-<section id="stats-section">
-  <div class="stats-inner" id="stat-strip"></div>
-</section>
-
-<!-- ════════════════════ EVIDENCE & EXPERTISE ════════════════════ -->
-<section id="evidence-section">
-  <div id="evidence-section-inner">
-    <div class="evidence-header fade-up">
-      <div>
-        <div class="section-label">Evidence & Expertise</div>
-        <div class="section-title">Core Competencies</div>
-      </div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#3f3f46;letter-spacing:.12em;margin-top:auto;padding-bottom:4px">QA_MATRIX v2.1</div>
-    </div>
-
-    <div class="triple-grid fade-up d1">
-      <!-- Col 1: QA Competencies -->
-      <div class="triple-col">
-        <div class="col-header">
-          <i data-lucide="check-circle-2" style="width:12px;height:12px;color:#3f3f46;flex-shrink:0"></i>
-          <span class="col-title">QA Competencies</span>
-        </div>
-        <div class="expertise-list" id="expertise-list"></div>
-      </div>
-
-      <!-- Col 2: Report Evidence -->
-      <div class="triple-col">
-        <div class="col-header">
-          <i data-lucide="folder-open" style="width:12px;height:12px;color:#3f3f46;flex-shrink:0"></i>
-          <span class="col-title">Report Evidence</span>
-        </div>
-        <div class="report-list" id="report-list"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════ PROJECTS ════════════════════ -->
-<section id="projects-section">
-  <div class="projects-inner">
-    <div class="fade-up" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:2.5rem">
-      <div>
-        <div class="section-label">Portfolio</div>
-        <div class="section-title">QA Testing Projects</div>
-      </div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#3f3f46;letter-spacing:.1em" id="project-count-label">
-        — / — ENGAGEMENTS
-      </div>
-    </div>
-
-    <div class="filter-bar fade-up d1">
-      <button class="filter-btn active" data-f="QA Testing" onclick="filterProjects('QA Testing')">
-        <i data-lucide="bug" style="width:11px;height:11px"></i>
-        QA Testing
-      </button>
-      <button class="filter-btn" data-f="Top Visits" onclick="filterProjects('Top Visits')">
-        <i data-lucide="trending-up" style="width:11px;height:11px"></i>
-        Top Visits
-      </button>
-    </div>
-
-    <div id="project-grid"></div>
-  </div>
-</section>
-
-<!-- ════════════════════ CONTACT ════════════════════ -->
-<footer id="contact">
-  <div class="contact-inner">
-    <div class="fade-up">
-      <div class="contact-label">Let's Connect</div>
-      <h2 class="contact-title">Got a project<br>in mind?</h2>
-      <a id="footer-discord-link" href="" target="_blank" rel="noreferrer" class="discord-btn">
-        <i data-lucide="message-square" style="width:15px;height:15px"></i>
-        Message on Discord
-      </a>
-    </div>
-
-    <div class="contact-meta fade-up d1">
-      <div class="meta-block">
-        <div class="meta-block-label">Availability</div>
-        <div class="meta-block-val available" id="footer-status"></div>
-      </div>
-      <div class="meta-block">
-        <div class="meta-block-label">Discord Handle</div>
-        <div class="meta-block-val" id="footer-handle"></div>
-      </div>
-      <div class="meta-block">
-        <div class="meta-block-label">Specialization</div>
-        <div class="meta-block-val" style="font-size:.75rem">Roblox QA / Bug Hunting / Game Testing</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer-bottom fade-up d2">
-    <span class="footer-cr" id="footer-cr"></span>
-    <div class="social-links" id="social-row"></div>
-  </div>
-</footer>
-
-<!-- ════════════════════ LIGHTBOX ════════════════════ -->
-<div id="lightbox" class="lightbox" onclick="if(event.target.id==='lightbox') closeLightbox()">
-  <div class="lightbox-content">
-    <div class="lightbox-close" onclick="closeLightbox()">
-      <i data-lucide="x" style="width:14px;height:14px"></i>
-    </div>
-    <img id="lightbox-img" class="lightbox-img" src="" alt="Report"/>
-  </div>
-</div>
-
-<style>
-@keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
-</style>
-
-<!-- ════════════════════ ENGINE ════════════════════ -->
-<script>
-function icons(){ if(window.lucide) lucide.createIcons(); }
-
-/* ── Static text ── */
-document.getElementById('nav-name').textContent      = DATA.short;
-document.getElementById('nav-label').textContent     = DATA.discord;
-document.getElementById('hero-name').textContent     = DATA.short;
-document.getElementById('hero-tagline').textContent  = DATA.tagline;
-document.getElementById('footer-cr').textContent     = '© ' + new Date().getFullYear() + ' ' + DATA.name + ' — All rights reserved.';
-document.getElementById('footer-status').textContent = DATA.status === 'Available' ? 'Available for Work' : DATA.status;
-document.getElementById('footer-handle').textContent = DATA.discord;
-
-/* ── Discord links ── */
-document.getElementById('nav-discord-link').href    = DATA.socials.discord;
-document.getElementById('footer-discord-link').href = DATA.socials.discord;
-
-/* ── Hero badge ── */
-(function(){
-  const ok = DATA.status === 'Available';
-  const t  = document.getElementById('hero-badge-text');
-  t.textContent = ok ? 'Available for Work' : DATA.status;
-  if(!ok){
-    document.querySelector('#hero-badge div').style.background = '#3f3f46';
-    document.querySelector('#hero-badge div').style.animation  = 'none';
-    t.style.color = '#71717a';
-  }
-})();
-
-/* ── Navbar scroll ── */
-window.addEventListener('scroll', ()=>{
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
-});
-
-/* ── Mobile menu ── */
-function toggleMenu(){ document.getElementById('mobile-menu').classList.toggle('open'); }
-document.addEventListener('click', e=>{
-  const m = document.getElementById('mobile-menu');
-  const h = document.getElementById('hamburger');
-  if(m && h && !m.contains(e.target) && !h.contains(e.target)) m.classList.remove('open');
-});
-
-/* ── Typewriter ── */
-(()=>{
-  const el = document.getElementById('typewriter-text');
-  let wi=0, ci=0, del=false;
-  function tick(){
-    const w = DATA.roles[wi];
-    el.textContent = w.slice(0, ci);
-    if(!del){ ci++; if(ci > w.length){ del=true; setTimeout(tick,1800); return; } }
-    else    { ci--; if(ci < 0){ ci=0; del=false; wi=(wi+1)%DATA.roles.length; setTimeout(tick,300); return; } }
-    setTimeout(tick, del ? 42 : 80);
-  }
-  tick();
-})();
-
-/* ── Stats ── */
-function renderStats(){
-  const el = document.getElementById('stat-strip');
-  DATA.stats.forEach((s, i)=>{
+/* ── Render Stats ── */
+function renderStats() {
+  const el = document.getElementById('stats-row');
+  DATA.stats.forEach(s => {
     const d = document.createElement('div');
-    d.className = 'stat-cell fade-up';
-    d.style.transitionDelay = (i * .1) + 's';
+    d.className = 'flex flex-col';
     d.innerHTML = `
-      <span class="stat-num">${s.n}</span>
-      <span class="stat-label">${s.label}</span>
-      <div class="stat-accent"></div>`;
+      <span class="font-mono text-2xl font-bold text-white">${s.n}</span>
+      <span class="font-mono text-[10px] uppercase text-zinc-600 tracking-tighter">${s.label}</span>
+    `;
     el.appendChild(d);
   });
 }
 
-/* ── Expertise ── */
-function renderExpertise(){
-  const el = document.getElementById('expertise-list');
-  DATA.expertise.forEach((e, i)=>{
-    const item = document.createElement('div');
-    item.className = 'expertise-item fade-up';
-    item.style.transitionDelay = (i * .05) + 's';
-    item.innerHTML = `
-      <div class="expertise-bullet"></div>
-      <div class="expertise-text">${e.title}</div>`;
-    el.appendChild(item);
-  });
-}
-
-/* ── Reports ── */
-function renderReports(){
-  const el = document.getElementById('report-list');
-  DATA.reports.forEach((r, i)=>{
-    const btn = document.createElement('a');
-    btn.className = 'report-btn fade-up';
-    btn.style.transitionDelay = (i * .05) + 's';
-    btn.href = r.href;
-    if(r.href && r.href !== '#'){
-      btn.target = '_blank';
-      btn.rel    = 'noreferrer';
-    } else {
-      btn.addEventListener('click', e => { if(r.href === '#') e.preventDefault(); });
-    }
-    btn.innerHTML = `
-      <i data-lucide="file-text" style="width:11px;height:11px" class="report-row-icon"></i>
-      <span class="report-label">${r.label}</span>
-      <span class="report-tag">${r.tag}</span>
-      <i data-lucide="external-link" style="width:9px;height:9px;color:#27272a;flex-shrink:0"></i>`;
-    el.appendChild(btn);
-  });
-}
-
-/* ── Lightbox ── */
-function openLightbox(url){
-  document.getElementById('lightbox-img').src = url;
-  document.getElementById('lightbox').classList.add('active');
-}
-function closeLightbox(){
-  document.getElementById('lightbox').classList.remove('active');
-}
-
-/* ── Projects ── */
-function renderProjects(filter){
-  const grid  = document.getElementById('project-grid');
-  const label = document.getElementById('project-count-label');
+/* ── Render Projects ── */
+function renderProjects(filter = 'qa') {
+  const grid = document.getElementById('project-grid');
   grid.innerHTML = '';
+  
+  const filtered = DATA.projects.filter(p => {
+    if(filter === 'top') return p.topVisits === 'yes';
+    return true; // Default to QA
+  });
 
-  const list = filter === 'Top Visits'
-    ? DATA.projects.filter(p => p.topVisits === 'yes')
-    : DATA.projects.filter(p => p.cat === 'QA Testing');
-
-  label.textContent = String(list.length).padStart(2,'0') + ' / ' + String(DATA.projects.length).padStart(2,'0') + ' ENGAGEMENTS';
-
-  if(!list.length){
-    grid.innerHTML = `<div style="padding:3rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#27272a">NO_RECORDS_FOUND</div>`;
-    return;
-  }
-
-  list.forEach((p, i)=>{
-    const isActive = p.status === 'Ongoing' || p.status === 'Deployed';
+  filtered.forEach(p => {
     const card = document.createElement('div');
-    card.className   = 'proj-card fade-up';
-    card.style.transitionDelay = (i * .04) + 's';
-
-    const thumbHtml = p.thumbnail
-      ? `<div class="card-thumb">
-           ${p.topVisits === 'yes' ? '<div class="top-visit-badge">TOP VISITS</div>' : ''}
-           <div class="card-accent-bar"></div>
-           <img src="${p.thumbnail}" alt="${p.title}" loading="lazy"
-             onerror="this.parentElement.innerHTML='<div class=\\'card-thumb-placeholder\\'><i data-lucide=\\'bug\\' style=\\'width:28px;height:28px;color:#27272a\\'></i></div>';icons()"/>
-         </div>`
-      : `<div class="card-thumb">
-           ${p.topVisits === 'yes' ? '<div class="top-visit-badge">TOP VISITS</div>' : ''}
-           <div class="card-accent-bar"></div>
-           <div class="card-thumb-placeholder"><i data-lucide="bug" style="width:28px;height:28px;color:#27272a"></i></div>
-         </div>`;
-
+    card.className = 'project-card space-y-4';
     card.innerHTML = `
-      ${thumbHtml}
-      <div class="card-body">
-        <div class="card-meta">
-          <span class="card-status">
-            <div class="status-dot ${isActive ? 'active' : ''}"></div>
-            ${p.status.toUpperCase()}
-          </span>
+      <div class="aspect-video bg-zinc-900 border border-zinc-800 overflow-hidden">
+        <img src="${p.img}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
+      </div>
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="text-xl font-bold text-white">${p.title}</h3>
+          <div class="flex gap-2 mt-2">
+            ${p.tags.map(t => `<span class="text-[9px] font-mono border border-zinc-800 px-2 py-0.5 uppercase text-zinc-500">${t}</span>`).join('')}
+          </div>
         </div>
-        <h3 class="card-title">${p.title}</h3>
-        ${p.desc ? `<p class="card-desc">${p.desc}</p>` : '<p class="card-desc"></p>'}
-        <div class="card-tags">
-          ${p.tags.map(t=>`<span class="card-tag">${t}</span>`).join('')}
-        </div>
-        <div class="card-footer">
-          <a href="${p.link}" target="_blank" rel="noreferrer" class="card-link">
-            View Project
-            <i data-lucide="external-link" style="width:10px;height:10px"></i>
-          </a>
-        </div>
-      </div>`;
-
+        <span class="font-mono text-[10px] text-orange-500 px-2 py-1 border border-orange-500/20 bg-orange-500/5">${p.stats}</span>
+      </div>
+      <p class="text-zinc-500 text-xs leading-relaxed">${p.desc}</p>
+    `;
     grid.appendChild(card);
-    requestAnimationFrame(()=> requestAnimationFrame(()=> card.classList.add('visible')));
+    setTimeout(() => card.classList.add('visible'), 50);
   });
   icons();
 }
 
 /* ── Filter ── */
-function filterProjects(cat){
-  document.querySelectorAll('.filter-btn').forEach(btn=>{
+function filterProjects(cat) {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.f === cat);
   });
   renderProjects(cat);
 }
 
 /* ── Socials ── */
-function renderSocials(){
-  const items = [
-    { href: DATA.socials.discord, icon:'message-square', label:'Discord' },
-    { href: DATA.socials.website, icon:'globe',          label:'Website' }
-  ];
+function renderSocials() {
   const row = document.getElementById('social-row');
-  items.forEach(s=>{
+  const items = [
+    { href: DATA.socials.discord, icon: 'message-square' },
+    { href: DATA.socials.website, icon: 'globe' }
+  ];
+  items.forEach(s => {
     const a = document.createElement('a');
-    a.href = s.href; a.target = '_blank'; a.rel = 'noreferrer'; a.title = s.label;
-    a.className = 'social-btn';
-    a.innerHTML = `<i data-lucide="${s.icon}" style="width:14px;height:14px;color:#52525b"></i>`;
+    a.href = s.href;
+    a.className = 'w-8 h-8 flex items-center justify-center border border-zinc-800 hover:border-zinc-400 transition-colors';
+    a.innerHTML = `<i data-lucide="${s.icon}" class="w-4 h-4 text-zinc-500"></i>`;
     row.appendChild(a);
   });
   icons();
 }
 
-/* ── IntersectionObserver ── */
-const obs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(!e.isIntersecting) return; e.target.classList.add('visible'); obs.unobserve(e.target); });
-}, { threshold: 0.06 });
-function observeAll(){ document.querySelectorAll('.fade-up').forEach(el=> obs.observe(el)); }
-
-/* ── Boot ── */
+// Init
 renderStats();
-renderExpertise();
-renderReports();
-renderProjects('QA Testing');
+renderProjects();
 renderSocials();
-icons();
-observeAll();
 </script>
+
 </body>
 </html>
